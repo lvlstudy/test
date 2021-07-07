@@ -1,0 +1,4 @@
+00 11 * * * sh -x /root/shell/file1.sh
+04 11 * * * sh -x /root/shell/file2.sh
+07 11 * * * sh -x /root/shell/file3.sh
+
