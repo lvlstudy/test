@@ -1,0 +1,26 @@
+--- 
+- name: update package openssl
+  hosts: registry
+  tasks:
+   - get_url: url=https://www.openssl.org/source/openssl-1.1.1g.tar.gz dest="/usr/local/src"
+   - get_url: url=https://openbsd.hk/pub/OpenBSD/OpenSSH/portable/openssh-8.4p1.tar.gz dest="/usr/local/src"
+   - yum:
+       name: "{{ packages }}"
+     vars:
+       packages:
+       - gcc
+       - pam-devel
+       - zlib-devel
+   - file: path="/usr/bin/openssl.bak" state=touch
+   - copy: src="/usr/bin/openssl" dest="/usr/bin/openssl.bak"
+   - raw: cd /usr/local/src
+   - unarchive: src="/usr/local/src/openssl-1.1.1g.tar.gz" dest="/usr/local/src" remote_src=yes
+   - shell: /usr/local/src/openssl-1.1.1g/config shared && make && make install
+   - copy: src="/usr/local/src/openssl-1.1.1g/include/openssl" dest="/usr/include" remote_src=yes 
+   - file: src="/usr/local/bin/openssl" dest="/usr/bin/openssl" state=link force=yes
+   - file: src="/usr/local/lib64/libssl.so.1.1" dest="/usr/lib64/libssl.so" state=link force=yes 
+   - file: src="/usr/local/lib64/libssl.so.1.1" dest="/usr/lib64/libssl.so.1.1" state=link force=yes
+   - file: src="/usr/local/lib64/libcrypto.so.1.1" dest="/usr/lib64/libcrypto.so" state=link force=yes
+   - file: src="/usr/local/lib64/libcrypto.so.1.1" dest="/usr/lib64/libcrypto.so.1.1" state=link force=yes
+   - shell: ldconfig
+   - command: openssl version

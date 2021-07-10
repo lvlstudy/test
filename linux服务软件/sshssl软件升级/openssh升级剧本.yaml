@@ -1,0 +1,17 @@
+---
+- name: update package openssh
+  hosts: yidong2
+  tasks:
+    - get_url: url=https://openbsd.hk/pub/OpenBSD/OpenSSH/portable/openssh-8.4p1.tar.gz dest="/usr/local/src"
+    - unarchive: src="/usr/local/src/openssh-8.4p1.tar.gz" dest="/usr/local/src" remote_src=yes
+    - shell: cd /usr/local/src/openssh-8.4p1
+    - raw: sed -i "/Root/s/#PermitRootLogin/PermitRootLogin/" /etc/ssh/sshd_config
+    - raw: sed -i "/GSSAPI/s/GSSAPI/#GSSAPI/" /etc/ssh/sshd_config
+    - raw: sed -i "/Type/s/Type/#Type/" /usr/lib/systemd/system/sshd.service
+    - shell: /usr/local/src/openssh-8.4p1/configure --prefix=/usr --sysconfdir=/etc/ssh/ --with-ssl-dir=/usr/local/openssl --with-md5-passwords
+    - shell: make && make install
+    - file: path="/etc/ssh/ssh_host_ecdsa_key" mode=0600
+    - command: systemctl daemon-reload
+    - service: name=sshd state=restarted enabled=yes
+    - command: ssh -V
+
