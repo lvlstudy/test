@@ -1,4 +1,5 @@
 #!/bin/bash
+#准备环境：在原有的虚拟机上新添加两个网卡，然后将他们配置成team,接着测试虚拟设备team网卡是否真的高可用？@@@
 nmcli connection add type team con-name team0 ifname team0 autoconnect yes config '{"runner": {"name": "activebackup"}}'
 #添加team成员即奴隶
 nmcli connection add type team-slave con-name team0-1 ifname eth1 master team0
