@@ -3,5 +3,7 @@ ssh-keygen -f /root/.ssh/id_rsa -P ''
 NET=192.168.224
 export SSHPASS=123
 for IP in 8 11;do
+#如果目标主机没有公钥文件，会报错提示-f option;下面就是产生公钥文件的命令
+#    ssh-keygen -f /root/.ssh/id_dsa -P ''
     sshpass -e ssh-copy-id root@$NET.$IP
 done
