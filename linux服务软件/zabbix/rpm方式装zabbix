@@ -1,0 +1,40 @@
+#!/bin/bash
+#systemctl disable firewalld --now
+#setenforce 0
+#sed -i "/SELINUX/s/enforcing/permissive/" /etc/selinux/config
+#hostnamectl set-hostname zabbix-server
+#bash
+#yum -y install httpd mariadb-server mariadb php php-mysql php-gd libjpeg* php-ldap php-odbc php-pear php-xml php-xmlrpc php-mhash
+#sed -i "/#ServerName/s/#ServerName/ServerName/" /etc/httpd/conf/httpd.conf
+#sed -i "/DirectoryIndex/c DirectoryIndex index.php index.html" /etc/httpd/conf/httpd.conf
+#sed -i "/;date.timezone/c date.timezone = PRC" /etc/php.ini
+#systemctl enable httpd --now
+#systemctl enable mariadb.service --now
+#netstat -anpt |grep 80
+#netstat -anpt | grep 3306
+#mysql_secure_installation
+#echo "<?php
+#      phpinfo();
+#      ?>" > /var/www/html/index.php
+#mysql -uroot -p123 -e "create database zabbix character set utf8 collate utf8_bin"
+#mysql -uroot -p123 -e "grant all on zabbix.* to zabbix@'%' identified by 'admin123'"
+#mysql -uroot -p123 -e "flush privileges"
+
+sed -i "2c $link=mysql_connect('192.168.224.9','zabbix','admin123');" /var/www/html/index.php
+sed -i "2a if ($link) echo '<h1>Success!!</h1>';" /var/www/html/index.php
+sed -i "3a else echo 'Fail!!';" /var/www/html/index.php
+sed -i "4a mysql_close()" /var/www/html/index.php
+#yum -y install php-mbstring php-bcmath
+#这以下三个必须一起执行
+#rpm -ivh http://repo.zabbix.com/zabbix/4.0/rhel/7/x86_64/zabbix-release-4.0-1.el7.noarch.rpm 
+#yum -y install  zabbix-server-mysql
+#yum -y install  zabbix-web-mysql
+#zcat /usr/share/doc/zabbix-server-mysql-4.0.32/create.sql.gz | mysql -uzabbix -padmin123 zabbix
+#sed -i "s/graphfont/kaiti/g" /usr/share/zabbix/include/defines.inc.php
+systemctl enable zabbix-server --now
+ss -antp | grep zabbix
+systemctl enable httpd --now
+
+
+
+
