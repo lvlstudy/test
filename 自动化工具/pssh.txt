@@ -1,0 +1,1 @@
+pssh是基于python2基础之上，所以要用python setup.py install进行安装；pssh相当于小型的ansible
