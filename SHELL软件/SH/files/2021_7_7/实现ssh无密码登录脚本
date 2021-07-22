@@ -1,5 +1,13 @@
 #!/bin/bash
 #还应下载sshpass命令，它能实现非交互事传密码直接登录远程服务器
+ wget http://sourceforge.net/projects/sshpass/files/latest/download -O sshpass.tar.gz
+tar -zxvf sshpass.tar.gz
+ cd sshpass-1.08
+yum -y install gcc
+./configure
+make
+ make install
+ #开始设置ssh无密码登录
 ssh-keygen -f /root/.ssh/id_rsa -P ''
 NET=192.168.224
 export SSHPASS=123
