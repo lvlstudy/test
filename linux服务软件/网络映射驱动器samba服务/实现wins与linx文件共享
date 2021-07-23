@@ -1,0 +1,2 @@
+Samba是SMB的一种实现方法，主要用来实现Linux系统的文件和打印服务。Linux用户通过配置使用Samba服务器可以实现与Windows用户的资源共享。
+守护进程smbd和nmbd是Samba的核心，在全部时间内运行。nmbd程序使得通过企图计算机可以浏览Linux服务器。
