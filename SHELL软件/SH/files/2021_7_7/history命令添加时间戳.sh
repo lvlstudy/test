@@ -1,5 +1,6 @@
 #!/bin/bash
 #增加历史命令后面的时间戳
+#如果要在历史命令之后再添加使用命令的当前用户是谁；只需在它执行完脚本之后自行添加`whoami`
 histroy_time()
 {
 add_time="export HISTTIMEFORMAT='%Y-%m-%d %H:%M:%S  '"
