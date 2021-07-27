@@ -1,0 +1,25 @@
+---
+- name: 安装服务
+  ignore_errors: True
+  hosts: node
+  tasks:
+       - name: load rpm 软件包
+         yum: 
+            name: httpd,net-tools
+            state: present
+       - name: 启用服务
+         service:
+            name: httpd
+            state: started
+            force: yes
+       - name: 查看端口
+         raw: netstat -ntulp |grep 80
+       
+       - name: 重启服务
+         service: 
+            name: httpd
+            state: restarted
+            force: yes
+                       
+         
+

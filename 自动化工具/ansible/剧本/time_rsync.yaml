@@ -1,0 +1,19 @@
+---
+- name: peizhi time 同步
+  ignore_errors: True
+  hosts: node
+  tasks:
+       - name: load rpm 软件包
+         yum: 
+            name: ntp,ntpdate,date
+            state: present
+       - raw: ntpdate time1.aliyun.com
+       - name: peizhi cron 定时任务
+         cron:
+            name: "ntpdate"
+            job: "ntpdate time1.aliyun.com" 
+            minute: "*/1"
+            hour: "*"
+            
+         
+
