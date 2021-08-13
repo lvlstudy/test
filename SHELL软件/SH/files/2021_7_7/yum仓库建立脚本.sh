@@ -36,7 +36,7 @@ else
     echo "对不起，你的镜像文件已存在，无需再创建"
 fi
 #查看yum仓库建设情况
-yum memcache
+yum makecache
 yum repolist
 
 
