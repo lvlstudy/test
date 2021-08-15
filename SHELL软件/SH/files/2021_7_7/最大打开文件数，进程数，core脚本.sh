@@ -24,7 +24,7 @@ EOF
 fi
 
 
-echo "--------------配置最大core dump文件数"
+echo "--------------配置最大core dump文件数--------------------"
 grep "* - core" /etc/security/limits.conf
 if [ $? != 0 ]
 then
