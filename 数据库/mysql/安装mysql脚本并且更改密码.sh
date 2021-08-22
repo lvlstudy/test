@@ -6,6 +6,7 @@ systemctl start mysqld
 mkdir /bak
 cp /etc/my.cnf /bak/my.cnf_bak
 #  $NF 是截取最后一列
+#  --connect-expired-password 能够实现非交互式的执行mysql命令
 init_passwd=`grep password /var/log/mysqld.log |head -1 |awk '{print $NF}'`
 mysql --connect-expired-password  -uroot  -p$init_passwd -e "alter user root@localhost identified by 'Zjq?1234'"
 length=`grep "validate_password_length" /etc/my.cnf`
