@@ -1,0 +1,41 @@
+kvm 环境准备
+192.168.8.12 虚拟机一台
+硬件要求：内存4G   CPU开启虚拟化功能  添加一块50G硬盘 
+一： 扩展根设备的空间
+lsblk   vgs     lvs
+#扩展卷组的空间
+vgextend centos  /dev/centos/root
+lvextend -L 40G /dev/centos/root
+df -h |grep root
+blkid /dev/centos/root 
+xfs_growfs /dev/centos/root
+df -h |grep root
+
+二将镜像文件传到相当于宿主机8.12 的某个目录，也好找到对应目录下的镜像文件
+可以使用mobaxterm来进行传递文件
+mkdir /iso
+du -sh /iso                4.2G 证明该镜像文件已经传递到相应的目录下
+
+三部署虚拟化KVM
+qemu-kvm  为kvm提供底层仿真支持
+libvirt-daemon: libvirtd 守护进程，管理虚拟机
+libvirt-client: 用户端软件，提供客户端管理命令
+libvirt-daemon-driver-qemu: libvirtd连接qemu的驱动
+virt-manager: 图形管理工具
+]# yum -y  install  qemu-kvm
+]# yum -y  install  libvirt-daemon
+]# yum -y  install  libvirt-client
+]# yum -y  install  libvirt-daemon-driver-qemu
+]# yum -y  install  virt-manager
+
+四在虚拟机8.12再新建虚拟机
+文件。。。。新建虚拟机。。。。。本地安装介质。。。浏览。。。。本地浏览。。。
+其他位置。。。。。。计算机（即宿主机的各个目录）。。。。。找到刚才新创建的iso目录
+1024，1。。。。。。9G。。。。。。。。。名称随意，完成即可
+就会进入正常的操作系统安装界面
+之后可以正常的设置静态ip地址
+
+
+
+
+
