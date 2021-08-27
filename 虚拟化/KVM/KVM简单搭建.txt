@@ -52,9 +52,25 @@ virsh  autostart [--disable] 虚拟机名称    开机自动运行（开机不�
 虚拟机的各种参数 内存，CPU uuid，磁盘，网卡等等              /etc/libvirt/qemu/centos7.0.xml
 磁盘镜像文件
 /var/lib/libvirt/images/centos7.0.qcow2
+mkdir -p /home/student/nsdfile
 virsh dumpxml centos7.0 >/home/student/nsdfile/nsd01.xml#将xml配置文件信息导入到一个刚刚创建的文件里
 
-
+八手动创建虚拟机（命令行模式）
+1.真机：创建磁盘镜像文件
+cd /var/lib/libvirt/images
+cp centos7.0.qcow2 nsd01.qcow2 #拷贝此文件需要点时间，时间可能有一点久
+2.真机：建立xml虚拟机文件
+vim /home/student/nsdfile/nsd01.xml
+uuid,mac地址即出厂地址如果发现没有地址，会自动生成，可以手动改不推荐，uuidgen,推荐第三种方法dd掉
+修改虚拟机名字， 删除uuid整行内容，删除mac地址整行内容mac address
+虚拟机磁盘路径/var/lib/libvirt/images/nsd01.qcow2
+3真机：导入虚拟机xml文件
+ls /etc/libvirt/qemu
+virsh define /home/student/nsdfile/nsd01.xml
+qumu目录下会多出来刚刚导入的nsd01.xml文件，注意使用copy没用，必须导入
+virsh list --all
+virsh start nsd01
+virt-manager检查一下虚拟机是否有操作系统，是否有登录界面
 
 
 
