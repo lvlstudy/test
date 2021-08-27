@@ -32,19 +32,34 @@ virt-manager: 图形管理工具
 文件。。。。新建虚拟机。。。。。本地安装介质。。。浏览。。。。本地浏览。。。
 其他位置。。。。。。计算机（即宿主机的各个目录）。。。。。找到刚才新创建的iso目录
 1024，1。。。。。。9G。。。。。。。。。名称随意，完成即可
-就会进入正常的操作系统安装界面
+就会进入正常的操作系统安装界面，，到此步骤将虚拟机正常安装即可
 
 
-查看虚拟化信息
+五查看虚拟化信息
+virsh支持交互式，同时支持非交互式，非交互式可以为写脚本控制虚拟机做准备
 virsh nodeinfo查看kvm节点（服务器）信息，，谁装kvm的宿主机信息，如真机信息
 virsh list [--all] 列出虚拟机
 virsh net-list [--all]列出虚拟网络
 virsh dominfo 虚拟机名称 查看指定的虚拟机的信息
 
-虚机机开关机操作以下命令行控制（也可以图形卡控制）
+六虚机机开关机操作以下命令行控制（也可以图形卡控制）
 virsh start|reboot|shutdown  虚拟机名称  运行|重启|关闭 虚拟机
 virsh destroy 虚拟机名称   强制关闭虚拟机
 virsh  autostart [--disable] 虚拟机名称    开机自动运行（开机不自启）虚拟机
+
+
+七快速建立新的虚拟机     xml配置文件 磁盘镜像文件 可以不同过图形创建，而是命令行创建
+虚拟机的各种参数 内存，CPU uuid，磁盘，网卡等等              /etc/libvirt/qemu/centos7.0.xml
+磁盘镜像文件
+/var/lib/libvirt/images/centos7.0.qcow2
+virsh dumpxml centos7.0 >/home/student/nsdfile/nsd01.xml#将xml配置文件信息导入到一个刚刚创建的文件里
+
+
+
+
+
+
+
 
 
 
