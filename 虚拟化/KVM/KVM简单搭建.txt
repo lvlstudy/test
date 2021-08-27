@@ -35,10 +35,19 @@ virt-manager: 图形管理工具
 就会进入正常的操作系统安装界面
 
 
+查看虚拟化信息
+virsh nodeinfo查看kvm节点（服务器）信息，，谁装kvm的宿主机信息，如真机信息
+virsh list [--all] 列出虚拟机
+virsh net-list [--all]列出虚拟网络
+virsh dominfo 虚拟机名称 查看指定的虚拟机的信息
+
 虚机机开关机操作以下命令行控制（也可以图形卡控制）
 virsh start|reboot|shutdown  虚拟机名称  运行|重启|关闭 虚拟机
 virsh destroy 虚拟机名称   强制关闭虚拟机
 virsh  autostart [--disable] 虚拟机名称    开机自动运行（开机不自启）虚拟机
+
+
+
 
 
 
