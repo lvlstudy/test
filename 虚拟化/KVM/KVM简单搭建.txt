@@ -71,8 +71,8 @@ qumu目录下会多出来刚刚导入的nsd01.xml文件，注意使用copy没用
 virsh list --all
 virsh start nsd01
 virt-manager检查一下虚拟机是否有操作系统，是否有登录界面
-
-
+virsh dumpxml nsd01 |grep -i uuid
+virsh dumpxml centos7.0 |grep -i uuid #可以看出它们两个的uuid是不一样的
 
 
 
