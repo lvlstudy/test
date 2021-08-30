@@ -1,0 +1,6 @@
+注意非关系型数据库与关系型数据库之间的区别
+关系型数据库rdbms 按照预先设置的组织结构，将数据存储在物理介质上；数据之间可以做关联操作
+主流的rdbms软件:MySQL Mariadb Oracle Db2 SQLServer
+非关系型数据库NoSQL(not only sql) 不仅仅SQL 泛指非关系型数据库 比如微信可以存储各种形式的文件，都是一个微信头像，加上其他的如文字，如语音，如视频等等就构成数据存储，就适合用Nosql操作
+不需要预先定义数据存储结构，每条记录可以有不同的数据类型和字段个数
+主流的Nosql软件：Memcached Redis MongoDB Neo4j FlockDB
