@@ -1,5 +1,5 @@
 #!/bin/bash
-#有个前提是8虚拟端口，走nat模式
+#有个前提是8虚拟端口，走nat模式，修改网卡配置文件，共6处地方，见以下两行
 #添加IP地址，子网掩码，网关（路由），域名解析dns
 #修改IP地址协议，性质，是静态ip还是动态iP，  并且设置开机自启即onboot=no变为onboot=yes
 ip=`grep IPADDR /etc/sysconfig/network-scripts/ifcfg-eth0`
