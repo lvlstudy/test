@@ -1,4 +1,7 @@
 pssh是基于python2基础之上，所以要用python setup.py install进行安装；pssh相当于小型的ansible
+基于访问外网，pssh软件包在epel-release的库当中（ansible也是）
+rpm -q epel-release || yum -y install epel-release
+rpm -q pssh || yum -y install pssh
 #基本的命令
  pssh -h /tmp/hosts.txt -P lsof -i :80
  pscp -h /tmp/hosts.txt /etc/hosts /usr/local
