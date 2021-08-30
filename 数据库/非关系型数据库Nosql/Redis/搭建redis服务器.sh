@@ -19,11 +19,11 @@
 #/var/lib/redis/6379/*.rdb存储在硬盘里的数据~~~
 
 #源码编译redis的tar包
-#ls /redis || mkdir /redis
-#rpm -q gcc ||yum -y install gcc
-#tar -zxf /redis/redis-4.0.8.tar.gz -C /redis
-#cd /redis/redis-4.0.8
-#make  &&  make install
+ls /redis || mkdir /redis
+rpm -q gcc ||yum -y install gcc
+tar -zxf /redis/redis-4.0.8.tar.gz -C /redis
+cd /redis/redis-4.0.8
+make  &&  make install
 #初始化配置
 cd /redis/redis-4.0.8
 sh -x utils/install_server.sh
