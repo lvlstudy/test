@@ -1,1 +1,25 @@
 配置文件解析
+主配置文件/etc/redis/6379.conf
+常用配置 默认端口 port 6379 视情况可以更改
+         IP地址   bind 127.0.0.1
+     守护进程方式运行 daemonize yes
+     数据库的个数   databases 16  默认编号为0~15
+     日志文件     logfile  /var/log/redis_6379.log
+     并发连接数    maxclients 10000
+     数据库目录    dir /var/lib/redis/6379    视情况可以更改以上配置
+
+内存管理
+内存清除策略
+volatile-lru  最近最少使用（针对设置了TTL的key）
+allkeys-lru   删除最少使用的key（针对所有的key，，全部算上）
+allkeys-lfu   从所有key中清除使用频率最少的key
+volatile-lfu 从所有配置了过期时间的key中清除使用评率最少的key
+
+volatile-random在设置了TTL的key里随机移除
+allkeys-random 随机移除key
+volatile-ttl(minor TTL)移除最近过期的key
+noeviction不删除，写满时报错，，一般不用
+
+优化设置maxmemory-policy定义使用策略，默认的
+maxmemory最大内存
+maxmemory-samples清除key模板的个数（针对lru，ttl策略）
