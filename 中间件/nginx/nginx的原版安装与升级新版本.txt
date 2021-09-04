@@ -1,0 +1,45 @@
+nginx的下载地址http://nginx.org/en/download.html，可以进去下载相应的nginx版本-
+一：搭建nginx的服务器
+要求：1支持ssl加密功能    2设置nginx账户及组名称均为nginx
+3nginx服务器升级到最高版本  
+架构：192.168.8.12作为nginx服务器     192.168.8.111作为客户端
+##实验步骤：
+1源码安装
+依赖包：gcc pcre-devel openssl-devel
+创建用户：useradd -s /sbin/nologin nginx
+tar -xf nginx-1.18.0.tar.gz && cd nginx-1.18.0 && ./configure --prefix=/usr/local/
+nginx#指定安装路径 --user=nginx --group=nginx --with-http_ssl_module#开启加密功能
+make编译
+make install安装
+查看生成的文件
+conf     主配置文件、
+html     网页
+logs     日志
+sbin     命令，主程序
+2服务控制
+/usr/local/nginx/sbin/nginx  启动nginx服务 （执行过检查是否存在）
+/usr/local/nginx/sbin/nginx -s stop关闭服务，执行完再执行会报错）
+该程序没有重启的命令可以先stop一下，然后再启动它
+/usr/local/nginx/sbin/nginx -s reload重新加载配置文件，不是重启，服务并没停掉 reload一定要在服务开启的时候才会生效
+/usr/local/nginx/sbin/nginx -V #查看软件详细信息
+ln -s /usr/local/nginx/sbin/nginx  /sbin/ ##设置命令快捷方式，可以直接nginx用起来方便，因为把命令原版放入到了/sbin/目录下
+
+
+3升级Nginx服务器
+配置文件不需要升级，否则配置文件被改掉了，只需要升级主程序
+解压新版本的nginx-1.21.2.tar.gz
+tar -xf nginx-1.21.2.tar.gz
+cd nginx-1.21.2
+./configure --user=nginx --group=nginx --with-http_ssl_module
+make
+make install
+ls objs/     #新目录里的nginx新版本
+mv /usr/local/nginx/sbin/nginx /usr/local/nginx/sbin/nginx.old  备份旧程序，防止要返回旧版本
+cp objs/nginx /usr/local/nginx/sbin/nginx 复制新版本
+make upgrade  杀死老的程序，启用新的程序
+###killall nginx
+###/usr/local/nginx/sbin/nginx 以上两条命令=make upgrade
+
+
+
+
