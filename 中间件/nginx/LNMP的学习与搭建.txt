@@ -1,0 +1,86 @@
+LNMP环境搭建    linux nginx mysql(mariadb)永远存数据（比如支持的注册账号） php
+Nginx(静态页面)
+静态页面                      动态页面
+a.doc,a.jpg，a.mp3,a.mp4      a.jsp(java)  a.sh(date) a.php(date) a.py(date)  a.perl 
+nihao 不变的                    ./a.sh
+拍照片是固定的                  每次出来的结果不一样，都需要解释器
+除非人为更改                 java + tomcat
+lnmp所需软件包
+nginx
+mariadb数据库客户端软件 mariadb-server数据库服务器软件  mariadb-devel其他客户端软件的依赖包
+php解释器  php-fpm（进程管理器服务） php-mysql（PHP的数据库扩展包）
+PHP模块化软件
+实验步骤
+1Nginx
+yum -y install gcc openssl-devel pcre-devel
+useradd -s /sbin/nologin nginx
+tar -xf nginx-1.12.2.tar.gz
+cd nginx-1.12.2
+./configure  --user=nginx --group=nginx --with-http_ssl_module
+make && make install
+2Mariadb
+yum -y install mariadb mariadb-server mariadb-devel
+3PHP
+yum -y install  php php-fpm  php-mysql
+启服务
+systemctl start mariadb  systemctl enable mariadb
+systemctl start php-fpm  systemctl enable php-fpm
+
+
+lnmp原理：用户访问Nginx网站服务器
+如果用户访问的是静态数据，则到html目录找，直接返回
+www.baidu.com/a.jpg -------------/usr/local/nginx/html/a.jpg，
+如果用户访问的是动态脚本，则到html目录找，转发给9000
+php-fpm是多进程软件分发技术fastcgi
+INTERNET -----> Nginx ----------socket(php-fpm) ------>fastcgi
+                                                ------>fastcgi
+												------>fastcgi
+location用来匹配用户的地址栏(支持正则）从/开始匹配 相当于if判断，会怎样
+   location  /abc { deny all; }
+   location  /ttt { deny 1.1.1.1; }
+   location  /test { allow all; }
+   location / 匹配所有，所有都能访问
+ firefox http://www.a.com/abc
+ firefox http://www.a.com/ttt
+ firefox http://www.a.com/test
+ 以上两个如果的处理就是动静分离的原理
+ 
+ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+ php主配置文件的查看
+ /etc/php-fpm.d/www.conf
+ PHP端口号l27.0.0.1:9000
+ 最大进程数量pm.max_children=32
+ 最小进程数量pm.start_server=15
+ 最少空闲进程pm.min_spare_servers=5
+ 最多允许几个空闲进程pm.max_spare_servers=32
+ 一：
+ a:
+建立测试文件
+ vi /usr/local/nginx/html/test.php
+ <?php 
+ $i="this is a test package";
+ echo $i;
+ ?>
+ b:
+ 修改配置文件
+ php的注释可以去掉，最长的那一行是错误的，可以注释掉
+ 
+ #主配置文件需要调用一下额外的配置文件（都在/usr/local/nginx/conf 目录里）
+ include fastcgi.conf
+ c:
+ 验证firefox http://192.168.8.12/test.php
+ 
+												
+												
+												
+												
+												
+												
+												
+												
+												
+												
+												
+												
+												
+												
