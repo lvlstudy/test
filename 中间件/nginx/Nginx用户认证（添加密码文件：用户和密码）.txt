@@ -1,0 +1,70 @@
+Nginx 添加用户认证    不是所有人都可以访问
+要求： 1给web页面需要进行用户认证 2举例：用户名tom 密码123456
+方案：添加auth语句在/usr/local/nginx/conf/nginx.conf的server_name下方两行
+一对比httpd配置文件
+<virtualhost *:80>
+servername www.example.com
+documentroot /var/www/html
+</virtualhost>
+
+nginx（/usr/local/nginx）
+  server{
+       listen 80;
+	   server_name localhost;
+	    root html;  #相对路径 相对nginx的安装路径
+  }
+  
+二Nginx.conf的配置文件
+#user  nobody;
+worker_processes  1;    ##   工作进程
+
+#error_log  logs/error.log;
+#error_log  logs/error.log  notice;
+#error_log  logs/error.log  info;
+
+#pid        logs/nginx.pid;            ##  存放进程的PID号
+
+
+events {
+    worker_connections  1024;   ##  并发连接数  并发连接nginx服务器的个数
+}
+
+三实验步骤
+按照方案在配置文件添加相应的参数
+server_name localhost
+auth_basic "input password:";
+auth_basic_user_file "/usr/local/nginx/pass";
+charset utf-8
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+生成密码文件
+yum -y install httpd-tools
+htpasswd -c /usr/local/nginx/pass  tom ##-c新建文件用户及密码
+
+
+cat /usr/local/nginx/pass
+htpasswd /usr/local/nginx/pass jerry ##不加c追加新用户，加c会覆盖旧用户
+主配置文件，密码文件都设置好了，重启生效
+nginx -s reload
+测试的时候注意清空缓存之后再测试，不然都不需要密码，因为缓存
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
