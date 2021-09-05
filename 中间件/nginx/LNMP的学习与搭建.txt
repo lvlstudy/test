@@ -69,11 +69,35 @@ location用来匹配用户的地址栏(支持正则）从/开始匹配 相当于
  include fastcgi.conf
  c:
  验证firefox http://192.168.8.12/test.php
- 
-												
-												
-												
-												
+ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~`~~~~~~~~~
+ ##数据库的连接使用   用来保存数据
+编写脚本  通过php连接mariadb    需要开发写脚本接入数据库
+以上php测试页面已做好，下面连接并查询mariadb数据库
+lnmp_soft/php_scripts/mysql.php
+将数据库mysql.php放入到/usr/local/nginx/html/目录下
+重新加载配置文件,是更改生效nginx -s reload
+然后用浏览器访问mysql.php,之前访问的是test.php	
+
+在数据库里添加数据    被访问的数据库网页mysql.php里面会实时更新，所以这就是动态页面的好处
+grant all on *.* to 'tom'@'localhost' identified by '123'
+grant all on *.* to 'jerry@2.2.2.2' identified by '123'							
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+LNMP常见问题
+Nginx的默认访问日志文件为/usr/local/nginx/logs/access.log  有用户访问该日志就会记录
+Nginx的默认错误日志 文件为/usr/local/nginx/logs/error.log 有错误才会有日志记录
+PHP默认错误日志文件为/var/log/php-fpm/www-error.log  有错误才会有日志记录
+如果动态网站访问失败，可用参考错误日志，查找错误信息
+
+
+
+1没有启动nginx php mariadb
+2没有安装php-mysql 
+3动态脚本写错了，访问脚本写错了
+
+
+
 												
 												
 												
