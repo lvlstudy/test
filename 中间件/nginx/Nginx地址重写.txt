@@ -1,0 +1,102 @@
+Nginx地址重写（地址栏被重写，改写）
+www.360buy.com ----->www.jd.com
+www.baidu.com -----> https://www.baidu.com
+www.a.com/youhui.html ------> www.a.com/index.html  优惠结束了，可以设置成跳转到首页
+
+地址重写主要用到以下的参数
+rewrite 旧地址 新地址 【选项】    旧地址支持正则表达式regex,正则包含即可符合条件
+一：同一IP地址不同网页页面的跳转
+在server_name下面添加重写
+rewrite /a.html /b.html; 地址栏在访问之后并未改变地址栏的名称，仍然为a
+rewrite /a.html /b.html redirect; 地址栏较前一个地址栏也发生变化，变为b
+创建需要的实验网页内容b
+echo BBB > /usr/local/nginx/conf/nginx.conf/nginx
+然后用浏览器访问测试 
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+二：不同IP地址的跳转
+rewrite ^/ http://www.tmooc.cn；     模糊匹配，不是精确匹配
+                
+三
+rewrite ^/手机 http://www.tmooc.cn/手机；
+rewrite ^/鞋子 http://www.tmooc.cn/鞋子；
+rewrite ^/(.*)(abc)  http://www.tmooc.cn/$1$2           ###(.*)括号的作用是保留复制
+$1为粘贴第一个括号，$2为粘贴第二个括号
+
+
+
+四实现curl和火狐访问相同链接返回的页面不同
+nginx.conf配置文件中的内容
+log_format 日志格式   1客户端地址 2--- 3对方输入的用户名    4时间  5在干嘛访问什么网页
+页面，请求什么页面 6状态是什么状态200 404 301等    7refer你从哪里来，通过什么平台搜索的，比如百度或者其他
+
+$http_user_agent   你用的是是什么浏览器，什么操作系统，最后一列的信息量多一些
+
+
+实验步骤
+第1步：
+创建网页目录以及对应的页面文件
+echo "I an Normal page"  >/usr/local/nginx/html/test.html
+mkdir -p /usr/local/nginx/html/firefox
+echo "firefox page" >/usr/local/nginx/html/firefox/test.html
+
+第2步：
+修改配置文件
+if ($http_user_agent  ~* firefox ) {       ##~正则匹配，模糊匹配 *为不区分大小写
+rewrite ^/(.*) /firefox/$1
+}
+然后重启生效验证一下配置是否正确
+可以发现 curl normal page   而火狐访问的是火狐页面
+
+
+
+五小结
+地址重写格式（总结）
+rewrite 旧地址 新地址（选项）
+last 不再读其他rewrite
+break 不再读其他语句
+redirect 临时重定向
+permanent 永久重定向
+
+举例rewrite /a.html /b.html
+    rewrite /b.html  /c.html      访问结果是c
+     rewrite /a.html /b.html last;  访问结果是b  last匹配即停止
+	 rewrite.......................................
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+     location /a.html {
+	     rewrite /a.html /b.html last;                     
+	}
+	  location /b.html {
+	     rewrite /b.html  /c.html;
+    }                                      结果仍然是c  因为location触发执行的，last没用的
+	
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+     location /a.html {
+	     rewrite /a.html /b.html  break;                     
+	}
+	  location /b.html {
+	     rewrite /b.html  /c.html;
+    }                                      结果仍然是b 因为break结束请求
+	
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
