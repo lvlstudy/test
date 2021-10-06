@@ -1,0 +1,52 @@
+7层   http ftp dhcp dns smtp pop
+4层    tcp udp  防火墙
+TCP/UDP调度          nginx可以调度很多服务       --with-stream开启4层代理模块
+客户端eth0 192.168.4.10   
+nginx代理  eth0 192.168.4.5    eth1 192.168.2.5
+ssh服务器  eth1 192.168.2.100  ssh服务器 eth1 192.168.2.200
+实验步骤：
+安装nginx
+1 yum -y install gcc pcre-devel openssl-devel 
+2 tar -xf nginx-1.12.2.tar.gz
+3 cd nginx-1.12.2
+4 ./configure --with-http_ssl_module
+--with-stream  开启四层代理模块
+make 
+make install
+
+二：修改配置文件
+在http的外面即http上面去添加
+定义集群以及去转发集群：
+stream {
+   upstream backup {
+     server 192.168.2.100:22;
+     server 192.168.2.200:22;
+   }
+   server {
+   listen  12345; #nginx的监听端口，不能是22，80因为已经有服务占用此端口，要别人没用的端口
+   proxy_pass backup;     #不能是http://backup,因为它不是网站服务 
+#   proxy_connect_timeout 1s  连接的超时时间
+#   proxy_timeout 3s
+}
+  }
+  
+三：修改完使配置文件修改生效，然后检验访问效果
+ssh 192.168.4.5 -p 12345
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
