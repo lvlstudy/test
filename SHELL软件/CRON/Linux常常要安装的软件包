@@ -1,0 +1,1 @@
+yum -y install vim  net-tools lrzsz  lsof  psmisc  gcc make  pcre-devel  zlib-devel 
