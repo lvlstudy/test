@@ -39,6 +39,69 @@ ssh 192.168.4.5 -p 12345
 
 
 
+########################################################################################
+########################################################################################
+########################################################################################
+数据库的负载均衡（通过端口转发数据库端口3306）
+
+一沿袭以上的nginx环境
+二：192.168.8.12 192.168.8.13两个服务器上安装mariadb，并且启动mariadb作为实验使用
+也可以适当创建一下不一样的库，以便等会儿好辨别进了哪台虚拟机，那个ip地址了，哪个数据库了
+ 也同时创建登入数据库的实验用户密码即实验账户：
+ 8.12     grant select on *.* to haha@'192.168.8.%' identified by '123456'
+ 8.13     grant select on *.* to haha@'192.168.8.%' identified by '123456'
+ 并且都更新一下flush privileges;
+ 
+三：8.11服务器上修改nginx的配置文件
+
+stream {
+    upstream mysql_read {
+        hash    $remote_addr consistent;
+        server  192.168.8.12:3306 weight=10 max_fails=3 fail_timeout=2s;
+    }   
+    upstream mysql_write {
+        hash    $remote_addr consistent;
+        server  192.168.8.13:3306 weight=10 max_fails=3 fail_timeout=2s;
+    }   
+    server {
+        listen 3306;
+        proxy_connect_timeout 3s;
+        proxy_timeout   10s;
+        proxy_pass  mysql_read;
+    }
+    server {
+        listen 3307;
+        proxy_connect_timeout 3s;
+        proxy_timeout   10s;
+        proxy_pass  mysql_write;
+    }
+}
+修改完让nginx配置文件生效
+测试：
+通过客户端测试刚才的数据库
+
+yum install -y mariadb
+
+mysql -h 192.168.8.11 -P 3306 -u haha -p123456
+
+mysql -h 192.168.8.11 -P 3307 -u haha -p123456
+
+结果：可以发现都能登录数据库，都能查看数据库，但是不能创建数据库，因为一开始的时候
+创建账户时只给账户查看的权利
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
