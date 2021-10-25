@@ -1,0 +1,28 @@
+Kill给某个进程发个信号
+
+Kill –USR1 pid号   kill -10 pid   这个时候nignx并没死掉
+Nginx日志切割
+/usr/local/nginx/logs/
+access.log    访问日志，如果不管他，他会变得无限变大
+nginx.pid 放进程号的日志文件       当前服务的进程号
+备份  mv access.log access2.log  改个文件名 
+Kill –USR1 `cat nginx.pid`   让nginx自己知道nginx日志没了 会新建一个access日志
+人习惯用名字 域名 文件名 
+计算机习惯用数字  id号 fileID uid 
+判断超级管理员 uid=0就行，有可能root tom 名称会改掉
+
+切割日志的脚本
+#/bin/bash
+date=`date +%Y%m%d`
+logpath=/usr/local/nginx/logs
+mv $logpath/access.log $logpath/access-$date.log        这个是几号的日志
+mv $logpath/error.log $logpath/error-$date.log
+kill –USR1 $(cat  $logpath/nginx.pid)
+
+
+计划任务crontab –e
+03 03 * * 5 /usr/local/nginx/logbak.sh
+
+
+
+
