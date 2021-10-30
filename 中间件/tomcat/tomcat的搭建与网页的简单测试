@@ -1,0 +1,66 @@
+Tomcat：基于java语言开发写的脚本，可以做web服务器
+目录
+Bin     主程序目录
+Lib     库文件目录
+Logs    日志目录
+Temp    临时目录
+Work     自动编译目录
+Conf     配置文件目录
+Webapps   页面目录
+ 
+命令
+tar -xf lnmp_soft.tar.gz
+cd lnmp_soft
+tar  -xf apache-tomcat-8.0.30.tar.gz
+mv apache-tomcat-8.0.30 /usr/local/tomcat
+netstat -ntulp|grep tomcat #没有tomcat这个端口
+netstat -ntulp |grep java  #有java端口
+cd /usr/local/tomcat/bin
+./startup.sh  #tomcat启动命令
+netstat -ntulp|grep java
+此时应该有3个端口8005  8009 8080   主要有8005  8080 就行
+8080用户上网的端口       8005为tomcat软件的端口
+
+########################################################################
+如果缺少端口，解决方法：
+Tomcat启动读取大量的一些随机数据
+cat /dev/random 会出现一堆乱码
+mv /dev/random /dev/bak
+ln -s /dev/urandom /dev/random
+strings /dev/random #应该会有大量的乱码出现，这些都是随机数据
+ 
+ 
+二：网页访问测试，端口：8080
+Curl   192.168.8.12
+网页文件以jsp作为结尾
+通常页面文件在webapps/ROOT里面可以写几个网页文件进行测试一下
+echo hao12345 >/usr/local/tomcat/webapps/ROOT/xixi.jsp
+cat > /usr/local/tomcat/webapps/ROOT/test.jsp <<EOF
+<html>
+<body>
+<center>
+now time is: <%=new java.util.Date()%>
+</center>
+</body>
+</html>
+EOF
+[root@h8b ROOT]# cat >1.jsp <<EOF
+> 345
+> 678
+> xyz
+> 我们的祖国万岁
+> EOF
+[root@h8b ROOT]# curl localhost:8080/1.jsp
+345
+678
+xyz
+我们的祖国万岁
+ cat test.jsp     #此页面是个动态页面因为它是一个java脚本，有动态变化的地方在里面
+<html>
+<body>
+<center>
+now time is: <%=new java.util.Date()%>
+</center>
+</body>
+</html>
+
