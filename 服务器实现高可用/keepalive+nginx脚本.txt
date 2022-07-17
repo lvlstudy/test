@@ -1,0 +1,73 @@
+##方案规划
+##VIP	IP	主机名	Nginx端口	默认主从
+##192.168.50.130	192.168.50.133	liuyazhuang133	88	MASTER
+##192.168.50.130	192.168.50.134	liuyazhuang134	88	BACKUP
+##CentOS 6.5 x64
+##keepalived-1.2.18.tar.gz
+##nginx-1.13.0.tar.g
+#####################################################################################
+
+yum install gcc gcc-c++ make automake autoconf libtool pcre pcre-devel zlib zlib-devel openssl openssl-devel  wget
+cd /usr/local/src/
+wget http://nginx.org/download/nginx-1.13.0.tar.gz
+cd /usr/local/src/
+ tar -zxvf nginx-1.13.0.tar.gz
+cd nginx-1.13.0
+./configure --prefix=/usr/local/nginx
+make && make install
+
+##2.修改nginx.conf配置文件（已准备好）
+##3.配置访问网页
+#修改 Nginx 欢迎首页内容（用于后面测试， 用于区分两个节点的 Nginx）：
+# vi /usr/local/nginx/html/index.html
+#192.168.50.133 中的标题加 1
+#<h1>Welcome to nginx! 1</h1>
+#192.168.50.134 中的标题加 2
+#<h1>Welcome to nginx! 2</h1>
+
+##4、系统防火墙打开对应的端口 88
+# vi /etc/sysconfig/iptables
+## Nginx
+#-A INPUT -m state --state NEW -m tcp -p tcp --dport 88 -j ACCEPT
+# service iptables restart
+##5、 测试 Nginx 是否安装成功
+# /usr/local/nginx/sbin/nginx -t
+##6、启动 Nginx
+/usr/local/nginx/sbin/nginx
+#7、 设置 Nginx 开机启动
+# vi /etc/rc.local#
+#加入：
+#/usr/local/nginx/sbin/nginx
+##8、最后访问两个nginx的访问地址，测试是否正常
+
+
+
+###########################################################################################################
+if [ -f  /usr/local/src/keepalived-1.2.18.tar.gz ]
+then
+   cd /usr/local/src
+   tar -zxvf keepalived-1.2.18.tar.gz
+   cd keepalived-1.2.18
+   ./configure --prefix=/usr/local/keepalived
+   make && make install
+fi
+3、 将 keepalived 安装成 Linux 系统服务
+因为没有使用 keepalived 的默认路径安装（默认是/usr/local） ,安装完成之后，需要做一些工作复制默认配置文件到默认路径
+# mkdir /etc/keepalived
+# cp /usr/local/keepalived/etc/keepalived/keepalived.conf /etc/keepalived/
+# cp /usr/local/keepalived/etc/rc.d/init.d/keepalived /etc/init.d/
+# cp /usr/local/keepalived/etc/sysconfig/keepalived /etc/sysconfig/
+# ln -s /usr/local/sbin/keepalived /usr/sbin/
+# ln -s /usr/local/keepalived/sbin/keepalived /sbin/
+设置 keepalived 服务开机启动
+# chkconfig keepalived on
+
+
+
+
+
+
+
+
+
+
