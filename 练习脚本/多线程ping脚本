@@ -1,0 +1,24 @@
+#!/bin/bash
+##给个提示语###
+echo "ping大量IP：begins...."
+
+###使用function函数将ping的命令包起来，构建ping函数###
+function abc {
+ping -c 3 $1 &> /dev/null 
+if [ $? -eq 0 ]
+then
+   echo $1 ok >>ok.log
+else
+   echo $1 error >> error.log
+fi
+}
+  
+###使用for循环调用函数###
+for ip in `seq 255`
+do
+  abc 192.168.8.$ip &
+done
+wait
+
+###给个结束的提示语###
+echo "ping结果出来了，成功！！！"
