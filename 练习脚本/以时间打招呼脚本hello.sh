@@ -16,6 +16,22 @@ echo -e " hello, \033[31m$msg\033[0m , $USER"
 
 
 举例：
+[root@nanjing1 jiaoben]# date +%F-%T
+2023-04-17-14:34:44
+date +"%Y-%m-%d-%H-%M-%S"
+2023-04-17-14-35-50
+[root@nanjing1 jiaoben]# date +"%Y-%m-%d %H-%M-%S"
+2023-04-17 14-36-07
+[root@nanjing1 jiaoben]# date +"%F %T"
+2023-04-17 14:36:13
+
+ date +"%F%T"
+2023-04-1714:36:18
+[root@nanjing1 jiaoben]# date +"%Y-%m-%d%H-%M-%S"
+2023-04-1714-36-30
+[root@nanjing1 jiaoben]# date +"%Y%m%d%H%M%S"
+20230417143643
+
 
 if ($i<5)    
 if [ $i -lt 5 ]    
