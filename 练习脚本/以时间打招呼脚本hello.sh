@@ -10,3 +10,12 @@ else
 fi
 echo "checktime is `date +%Y-%m-%d-%H:%M:%S`"
 echo -e " hello, \033[31m$msg\033[0m , $USER"
+
+
+
+
+
+
+记忆这些颜色代码还是很费劲的,也没必要。可以使用https://tooltt.com/ansi/这个在线工具通过页面点击自动生成颜色代码。
+
+
