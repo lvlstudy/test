@@ -1,1 +1,14 @@
-11
+#!/bin/bash
+maxfile=/tmp/test.cst
+maxsize=$((1*1024*1024))
+file_truesize=$(du -s $maxfile | awk '{print $1}')
+if [ ${file_truesize} -gt $maxsize ]
+then
+   echo "$maxfile大小尺寸为`du -sh $maxfile |awk '{print $1}'`"
+   echo " " >$maxfile
+   echo "清空文件成功，大文件清理完成"
+else
+   echo "$maxfile大小尺寸为`du -m $maxfile |awk '{print $1"M"}'`"
+   echo "无需清空文件，文件大小不大"  
+fi
+
