@@ -1,0 +1,40 @@
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+[root@nanjing1 ~]# awk -F: '$3>=1000{print $1}' /etc/passwd
+yidong
+zjq
+zhangjq
+zabbix
+test
+[root@nanjing1 ~]# awk -F: '$3>=1000{print $3,$1}' /etc/passwd
+1000 yidong
+1001 zjq
+1002 zhangjq
+1003 zabbix
+1004 test
+[root@nanjing1 ~]# awk -F: '$3>1000{print $3,$1}' /etc/passwd
+1001 zjq
+1002 zhangjq
+1003 zabbix
+1004 test
+
+
+awk混合条件设置，多条件查找
+[root@nanjing1 ~]# awk -F: '$3>1000&&$3!=1003{print $3,$1}' /etc/passwd
+1001 zjq
+1002 zhangjq
+1004 test
