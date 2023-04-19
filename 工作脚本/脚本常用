@@ -3,3 +3,5 @@
 select * from biz_info_dt_2019 where acc_nbr = '19850403058'\G;
 
 select * from order_base_info_2019 where id IN (select order_base_id from biz_info_dt_2019 where acc_nbr = '19850403058')\G
+###查询商品编码与用户编号（最终版）
+select  good_code,user_id  from order_base_info_2019 where id IN (select order_base_id from biz_info_dt_2019 where acc_nbr = '19850403058')\G 
