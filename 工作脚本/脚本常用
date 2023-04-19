@@ -18,6 +18,13 @@ B查询联系号码：  同时显示业务号码和联系号码
 select acc_nbr,AES_DECRYPT(from_base64(contact_phone),"cmccheli") from biz_info_dt WHERE acc_nbr = "19552013382";
 
 
+C查渠道编码或者渠道名称
+公司名称companyName和userID给负责人
+select * from order_base_info where id IN ( 12880008,13049944) \G;
+订单有userID
+下面命令在openJANGSU账号查询：
+select * from open_verification where userId =  581\G;
+
 
 
 
