@@ -13,6 +13,10 @@ select  good_code,user_id  from order_base_info_2019 where id IN (select order_b
 
 
 
+B查询联系号码：
+select acc_nbr,AES_DECRYPT(from_base64(contact_phone),"cmccheli") from biz_info_dt WHERE acc_nbr = "19552013382";
+
+
 
 
 
