@@ -25,6 +25,15 @@ select * from order_base_info where id IN ( 12880008,13049944) \G;
 下面命令在openJANGSU账号查询：
 select * from open_verification where userId =  581\G;
 
+D.通过身份证信息查看订单：
+select * from biz_info_dt_2019 where AES_DECRYPT(from_base64(ic_no),"cmccheli") = '532127198607280713';  #没有订单查询之后
+select * from biz_info_dt_2019 where AES_DECRYPT(from_base64(ic_no),"cmccheli") = '330127199101043935';  #有订单查询之后
+
+#在查询用户信息之后，再通过查看订单ID查看订单状态：
+#select * from order_base_info_2019 where id =        (biz_info_dt表里的order_base_id字段)
+
+select * from order_base_info_2019 where id IN (1002358,1002379) \G;
+
 
 
 
