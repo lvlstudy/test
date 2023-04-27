@@ -1,0 +1,17 @@
+ cat city_five.sh
+#!/bin/bash
+set -ue
+#-a 代表是数组
+declare  -a city_name
+read -p  "Please input city name (count >= 5):" -a city_name
+city_count=${#city_name[@]}
+if [ $city_count -lt 5 ]
+then
+  echo "the count of city is so less, request for five or more"
+  exit 2
+fi
+
+for city in ${city_name[@]}
+do
+  echo  $city
+done 
