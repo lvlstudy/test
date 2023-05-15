@@ -1,0 +1,22 @@
+#!/bin/bash
+
+Checkfile="/etc/nginx/bss_acl/bss_acl.conf"
+cp $Checkfile /home/weihu1/haoka_jiabai/bss_acl.conf_newbackup
+for i in $(cat haokaip.txt)
+do
+   grep "$i"  $Checkfile
+   if [ $? -eq 0 ];then
+     echo "$i 已存在于bss_acl文件中，忽略"
+   else
+     echo "$i 未存在于bss_acl文件中，加入"
+     sleep 5
+     echo "添加IP开始################"
+     sed -i "/deny/i allow ${i};"  $Checkfile
+     echo "添加IP结束##################"
+   fi 
+done
+
+
+
+
+
