@@ -1,0 +1,95 @@
+sed -i 's/enforcing/disabled/g' /etc/selinux/config
+setenforce 0
+curl -o /etc/yum.repos.d/epel.repo http://mirrors.aliyun.com/repo/epel-7.repo 
+curl -o /etc/yum.repos.d/CentOS-Base.repo https://mirrors.aliyun.com/repo/Centos-7.repo 
+sed -i -e '/mirrors.cloud.aliyuncs.com/d' -e '/mirrors.aliyuncs.com/d' /etc/yum.repos.d/CentOS-Base.repo 
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+上脚本：
+#!/bin/sh
+#1、安装vsftpd服务
+yum install vsftpd -y
+#2、备份默认配置文件，并重新生成配置文件
+cd /etc/vsftpd/
+cp vsftpd.conf vsftpd.conf_default
+echo > vsftpd.conf
+cat > /etc/vsftpd/vsftpd.conf  << \EOF
+#设成NO,不允许匿名用户登陆
+anonymous_enable=NO
+#允许/禁止本地用户登陆 注意：主要是为虚拟宿主用户，如果该项目设定为NO那么所有虚拟用户将无法访问。
+local_enable=YES
+#设定可以进行写操作
+write_enable=YES
+#设定启用虚拟用户功能
+guest_enable=YES
+#指定虚拟用户的宿主用户
+guest_username=ftpvuser
+#设定虚拟用户的权限符合他们的宿主用户
+#virtual_use_local_privs=YES
+#设定上传后文件的权限掩码，文件644，文件夹755
+local_umask=022
+#设定开启目录标语功能
+dirmessage_enable=YES
+#设定开启日志记录功能
+xferlog_enable=YES
+#设定端口20进行数据连接
+connect_from_port_20=YES
+#设定日志使用标准的记录格式
+xferlog_std_format=YES
+#开启独立进程vsftpd，不使用超级进程xinetd。设定该Vsftpd服务工作在StandAlone模式下。
+listen=YES
+#设定userlist_file中的用户将不得使用FTP
+userlist_enable=YES
+#设定支持TCP Wrappers
+tcp_wrappers=YES
+#限制所有用户在主目录
+chroot_local_user=YES
+allow_writeable_chroot=YES
+#匿名用户上传文件的 umask 值
+anon_umask=077
+#设定，启用pam认证，并指定认证文件名/etc/pam.d/vsftpd.vu
+pam_service_name=vsftpd.vu
+#设定虚拟用户个人vsftp的配置文件存放路径。也就是说，这个被指定的目录里，将存放每个vsftp虚拟用户个性的配置文件，
+#一个需要注意的地方就是这些配置文件名必须和虚拟用户名相同。
+user_config_dir=/etc/vsftpd/vusers_dir
+EOF
+#3、设置被动传输时的数据传输端口
+echo "pasv_enable=YES">> /etc/vsftpd/vsftpd.conf
+echo "pasv_min_port=30001">> /etc/vsftpd/vsftpd.conf
+echo "pasv_max_port=30010">> /etc/vsftpd/vsftpd.conf
+#4、创建用于进行 FTP 认证的用户数据库文件
+#这里使用文本文件进行用户认证
+#数据库文件中奇数行为账户名，偶数行为密码
+cat > /etc/vsftpd/vuser.list << \EOF
+ftpuser
+123456
+EOF
+#4、创建 vsftpd 服务程序用于存储文件的根目录以及虚拟用户映射的系统本地用户
+mkdir /data
+useradd -d /data/FTP -s /bin/nologin ftpvuser
+cd /etc/vsftpd/
+db_load -T -t hash -f vuser.list vuser.db
+chmod 600 vuser.db 
+#5、为虚拟用户设置访问权限
+#只需新建一个目录，在里面分别创建以虚拟用户名称命名的文件
+#在每个文件中，对用户分别进行配置，达到管理不用用户权限的效果
+mkdir /etc/vsftpd/vusers_dir/
+cd /etc/vsftpd/vusers_dir/
+touch ftpuser 
+cat > ftpuser  << \EOF
+anon_upload_enable=YES
+anon_mkdir_write_enable=YES
+anon_other_write_enable=YES
+dirmessage_enable=YES
+anon_world_readable_only=NO
+EOF
+#6、建立支持虚拟用户的 PAM 认证文件
+cat > /etc/pam.d/vsftpd.vu << \EOF
+auth       required     pam_userdb.so    db=/etc/vsftpd/vuser
+account    required     pam_userdb.so    db=/etc/vsftpd/vuser
+EOF
+#7、防火墙设置及vsftpd服务开启
+firewall-cmd --add-service=ftp --zone=public --permanent
+firewall-cmd --permanent --zone=public --add-port=30001-30010/tcp
+firewall-cmd --reload
+systemctl restart vsftpd
+systemctl enable vsftpd
