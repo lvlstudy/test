@@ -1,0 +1,17 @@
+
+###########################################
+#!/bin/bash
+Checkfile="/etc/nginx/conf/wwwblackip.conf"
+for i in $(cat ips)
+do
+   grep "$i" $Checkfile
+   if [ $? -eq 0 ];then
+     echo "$i 已存在于$Checkfile文件中，忽略"
+   else
+     echo "$i 未存在于$Checkfile文件中，加入"
+     sleep 5
+     echo "开始添加IP##############"
+     echo "$i true;" >> $Checkfile
+     echo "添加IP结束################"
+   fi 
+done
