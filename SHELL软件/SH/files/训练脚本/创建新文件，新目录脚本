@@ -1,1 +1,25 @@
+[root@nanjing1 jiaoben]# cat touchfile.sh 
+#!/bin/bash
+WORKFILE="/opt/jiaoben/testfile/file/log1"
+##"特殊符号井号#，是去除前缀，一直到最后一个斜杠"
+basefile=${WORKFILE##*/}
+##"特殊符号百分号，是去除后缀，去除前一个的文件名称"
+dirpath=${WORKFILE%$basefile}
+echo $basefile
+
+echo $dirpath
+echo "判断该$dirpath是否存在："
+[ -d "$dirpath" ] && echo "$dirpath路径已存在" || mkdir -p $dirpath
+echo "判断该$basefile是否存在："
+[ -f "$dirpath/$basefile" ] && echo "$dirpath/$basefile路径已存在" || touch $dirpath/$basefile && echo "123456" >>$dirpath/$basefile
+
+
+执行效果如下：
+[root@nanjing1 jiaoben]# sh touchfile.sh 
+log1
+/opt/jiaoben/testfile/file/
+判断该/opt/jiaoben/testfile/file/是否存在：
+/opt/jiaoben/testfile/file/路径已存在
+判断该log1是否存在：
+/opt/jiaoben/testfile/file//log1路径已存在
 
