@@ -1,0 +1,10 @@
+Current CPU Utilization is : 11.50%
+Current CPU Utilization is : 8.50%
+Current CPU Utilization is : 30.40%
+Current CPU Utilization is : 10.80%
+Current CPU Utilization is : 9.30%
+Current CPU Utilization is : 10.50%
+Current CPU Utilization is : 18.30%
+Current CPU Utilization is : 9.20%
+Current CPU Utilization is : 7.60%
+Current CPU Utilization is : 8.50%
