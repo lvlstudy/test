@@ -1,0 +1,48 @@
+剧本内容：
+[root@zabbix-agent ansible]# cat http.yml
+---
+- hosts: slave
+  tasks:
+     - yum:
+         name: httpd
+         state: present
+     - copy:
+         src: /opt/ansible/apache/httpd.conf
+         dest: /etc/httpd/conf/httpd.conf
+     - service:
+         name: httpd
+         state: started
+         enabled: yes
+     - raw: netstat -ntulp |grep 80 && echo "httpd服务运作正常"
+[root@zabbix-agent ansible]# 
+
+执行效果：
+[root@zabbix-agent ansible]# ansible-playbook http.yml 
+
+PLAY [slave] ***************************************************************************************************************************************
+
+TASK [Gathering Facts] *****************************************************************************************************************************
+ok: [192.168.8.200]
+
+TASK [yum] *****************************************************************************************************************************************
+ok: [192.168.8.200]
+
+TASK [copy] ****************************************************************************************************************************************
+changed: [192.168.8.200]
+
+TASK [service] *************************************************************************************************************************************
+changed: [192.168.8.200]
+
+TASK [raw] *****************************************************************************************************************************************
+changed: [192.168.8.200]
+
+PLAY RECAP *****************************************************************************************************************************************
+192.168.8.200              : ok=5    changed=3    unreachable=0    failed=0    skipped=0    rescued=0    ignored=0   
+
+[root@zabbix-agent ansible]# curl localhost
+curl: (7) Failed connect to localhost:80; Connection refused
+[root@zabbix-agent ansible]# curl localhost:8085
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd"><html><head>
+<meta http-equiv="content-type" content="text/html; charset=UTF-8">
+		<title>Apache HTTP Server Test Page powered by CentOS</title>
+
