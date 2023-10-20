@@ -1,0 +1,46 @@
+grep -A -B -C -a -c -n -v -i等
+
+You丶小明快跑
+
+已于 2022-05-14 16:34:22 修改
+
+20548
+ 收藏 49
+分类专栏： 每天一个Linux命令 文章标签： linux
+版权
+
+每天一个Linux命令
+专栏收录该内容
+2 篇文章1 订阅
+订阅专栏
+grep -A  -B -C(大写)    后面都跟阿拉伯数字  ，这三种都是看文件的上下文，在文件输出很大的时候起到很大的作用
+-A是显示匹配后和它后面的n行。after 
+-B是显示匹配行和它前面的n行。 before
+-C是匹配行和它前后各n行。 context
+
+例如：grep -A 1 hello test.txt 
+就是搜索test.txt，找到匹配“hello”字串的行，显示该行和后面的1行。
+例如：grep -B 1 hello test.txt 
+就是搜索test.txt，找到匹配“hello”字串的行，显示该行和前面的1行。
+例如：grep -C 1 hello test.txt 
+就是搜索test.txt，找到匹配“hello”字串的行，显示该行和前后1行。
+
+
+
+
+grep -a  -c/n  -v  -i(小写)
+
+例如：grep keyword  /opt/filename
+将/opt/filename，有出现keyword的行取出来
+例如：grep -c keyword filename1  
+在文件1 中查找keyword 的个数
+
+gp -c keyword filename1 filename2  
+在文件1 文件2中查找keyword 的个数
+
+grep  -v 反查一般是利用管道符和其他命令一起使用
+
+例如：cat /opt/filename1 | grep -v hello  显示出filename文件中除hello以外的内容    
+
+grep -i   忽略大小写。
+————————————————
