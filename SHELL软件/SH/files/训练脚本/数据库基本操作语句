@@ -1,0 +1,35 @@
+一.  74上登陆数据库进行查询：
+A.查询是否是平台订单，并且提供商品编码和用户ID，  哪个渠道就是提供用户ID
+查询是否移动平台订单，有订单就是该平台订单
+select * from biz_info_dt_2019 where acc_nbr = '19850403058'\G;
+###查询订单编号查询
+select order_base_id from biz_info_dt_2019 where acc_nbr = '19850403058'
+
+
+
+select * from order_base_info_2019 where id IN (select order_base_id from biz_info_dt_2019 where acc_nbr = '19850403058')\G
+###查询商品编码与用户编号（最终版）
+select  good_code,user_id  from order_base_info_2019 where id IN (select order_base_id from biz_info_dt_2019 where acc_nbr = '19850403058')\G 
+
+
+
+
+B查询联系号码：  同时显示业务号码和联系号码
+select acc_nbr,AES_DECRYPT(from_base64(contact_phone),"cmccheli") from biz_info_dt WHERE acc_nbr = "19552013382";
+
+
+C查渠道编码或者渠道名称
+公司名称companyName和userID给负责人
+select * from order_base_info where id IN ( 12880008,13049944) \G;
+订单有userID
+下面命令在openJANGSU账号查询：
+select * from open_verification where userId =  581\G;
+
+D.通过身份证信息查看订单：
+select * from biz_info_dt_2019 where AES_DECRYPT(from_base64(ic_no),"cmccheli") = '532127198607280713';  #没有订单查询之后
+select * from biz_info_dt_2019 where AES_DECRYPT(from_base64(ic_no),"cmccheli") = '330127199101043935';  #有订单查询之后
+
+#在查询用户信息之后，再通过查看订单ID查看订单状态：
+#select * from order_base_info_2019 where id =        (biz_info_dt表里的order_base_id字段)
+
+select * from order_base_info_2019 where id IN (1002358,1002379) \G;
