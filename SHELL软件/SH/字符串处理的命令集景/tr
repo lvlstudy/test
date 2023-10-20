@@ -1,0 +1,120 @@
+Linux tr 命令详解与实例
+原创 myfreax myfreax 2022-12-12 12:00 发表于广东
+收录于合集
+#字符 1 个
+#linux121 个
+#命令 32 个
+#tr1 个
+myfreax
+www.myfreax.com
+166 篇原创内容
+公众号
+tr 是 Linux 和 Unix 系统中的命令行程序，可转换，删除和压缩标准输入
+的字符，并将结果写入标准输出。
+tr 命令通常通过管道与其他命令组合使用，并且可以执行删除重复字符，
+将大写转换为小写以及基本字符替换和删除的操作。
+在本教程中，我们将通过实际示例和最常见选项的详细说明向您展示如
+何使用 tr 命令。
+tr 命令选项
+tr 命令的语法形式是 tr OPTION... SET1 [SET2]。OPTION 选项是必须的参数，SET
+是字符集合，可以是一个多个字符集合。
+tr 命令默认接受具有相同长度的两组字符，并用第二组中字符集合替换
+第一组存在的字符集合。
+例如命令 echo 'myfreax' | tr 'myf' 'red'将 m 替换为 r，y 替换为 e，将 f 替换为
+d。
+echo 'myfreax' | tr 'myf' 'red'
+redreax
+也可以使用字符范围来定义字符集，减少繁琐的输入，例如你要输入
+lmno，可以使用 l-n 代替。
+也 就 是 说 命 令 echo 'myfreax' | tr 'lmno' 'wxyz'和 echo 'myfreax' | tr 'l-n' 'w-z'是 等
+价的。
+echo 'myfreax' | tr 'lmno' 'wxyz'
+echo 'myfreax' | tr 'l-n' 'w-z'
+当使用 tr 命令的-c/--complement 选项时，tr 命令将会替换第一组不存在的
+所有字符。
+例如命令 echo 'myfreax' | tr -c 'fa' 'xy'使用 y 替换字符串 myfreax 不是 f 或者
+a 的字符。
+您可能已经注意到输出比输入多一个可见的字符。这是因为 echo 命令会
+打印一个不可见的换行符\n。
+tr 命令也将\n 字符也替换为 y。为了使 echo 命令不打印换行符，请使用
+echo 命令的-n 选项。
+echo 'myfreax' | tr -c 'fa' 'xy'
+echo -n 'myfreax' | tr -c 'fa' 'xy'
+yyfyyayy
+tr 命令的-d/--delete 选项删除指定字符集合。例如命令 echo 'myfreax' | tr -d 'ea'
+删除字符串 myfreax 的 ea 字符串。
+在不压缩字符的情况下删除字符时，您只能指定一组。
+echo 'myfreax' | tr -d 'ea'
+myfrx
+-s/--squeeze-repeats 选项使用最后一个字符集合替换重复出现的字符。命
+令 echo "GNU \ Linux" | tr -s ' '删除重复出现的空格字符。
+在 指 定 第 二 个 字 符 集 合 时 ， 首 先 使 用 第 一 个 字 符 集 合 替 换 字 符 串
+GNU \ Linux，然后使用第二个字符集合替换第一个字符集合。
+echo "GNU \ Linux" | tr -s ' ' #GNU \ Linux
+echo "GNU \ Linux" | tr -s ' ' '_' #GNU_\_Linux
+tr 命令转换小写大写
+将小写转换为大写或者大写转小写。是 tr 命令的典型用例之一。在指定
+字符集合时可以使用[:lower:]匹配小写字符，[:upper:]匹配大写字符。
+除了字符类，您还可以使用范围，例如'a-z'匹配小写字符串，'A-Z'匹配
+大写字符。要将大写转换为小写，只需切换字符集合的位置即可。
+命令 echo 'myfreax' | tr 'a-z' 'A-Z'转换为大写，echo 'myfreax' | tr 'A-Z' 'a-z'转换为
+小写。
+echo 'myfreax' | tr '[:lower:]' '[:upper:]' #MYFREAX
+echo 'myfreax' | tr 'a-z' 'A-Z' #MYFREAX
+tr 命令删除数字
+[:digit:]代表所有数字字符，要删除数字，可以组合使用 tr 命令的-cd 选项
+删除所有非数字字符。
+tr 命令的-c 选项表示替换第一组不存在的所有字符。-s 选项表示删除字符
+一组字符集合存在的字符。
+tr -cd [:digit:]组合起来就是删除第一组字符集合不是数字的字符，如果你
+要删除不是数字的字符，使用[:alpha:]替换[:digit:]。
+echo "my phone is 123-456-7890" | tr -cd [:digit:]
+1234567890
+tr 命令在单词末尾插入换行符
+[:alnum:]代表所有数字和字符 A-Z 与 a-z，要在单词末尾插入换行符，可以
+组合使用 tr 命令的-cs 选项删除所有非数字字符。
+tr 命令的-c 选项表示替换第一组不存在的所有字符。-s 选项表示使用最后
+一个字符集合替换重复出现的字符。-c '[:alnum:]'表示搜索所有空白字符。
+tr -cs '[:alnum:]' '\n'组合起来就是搜索所有空白字符串替换为换行符\n。
+echo 'GNU is an operating system' | tr -cs '[:alnum:]' '\n'
+GNU
+is
+an
+operating
+system
+tr 命令删除空行
+由于 tr 命令仅接受标准输入，因此必须使用标准输入重定向符号<，将
+标准输入的键盘替换为文件。
+tr 命令的-s 选项表示使用最后一个字符集合替换重复出现的字符。换行符
+号在单行中会被以为是重复字符串。
+tr -s '\n'组合就是替换重复的换行符，由于命令没有指定第二个字符集合，
+因此没有字符替换。
+最后> new_file.txt 就是将 tr 命令的标准输出重定向到文件 new_file.txt。
+tr -s '\n' < file.txt > new_file.txt
+tr 命令打印$PATH 目录
+$PATH 环境变量是用冒号分隔的目录列表，指示 Shell 程序在用户运行命
+令时要搜索可执行文件的目录。
+如要在每一行打印每个$PATH 环境变量的目录，只需要将冒号:替换为换
+行符号即可。
+echo $PATH | tr ':' '\n'
+/usr/local/sbin
+/usr/local/bin
+/usr/sbin
+/usr/bin
+/sbin
+/bin
+结论
+现在，您应该对如何使用 Linux tr 命令有很好的了解。tr 只能使用单个
+字符。对于复杂的模式匹配和字符串处理应该使用 sed 或 awk。
+如果您有任何问题或反馈，请随时发表评论。如果排版存在错乱，点击
+下方阅读原文获取更好排版格式。
+myfreax
+知识无价，创作不易，支持我们
+喜欢作者
+阅读原文
+阅读 283
+分享收藏
+2 在看
+myfreax
+166 篇原创内容
+关 注
