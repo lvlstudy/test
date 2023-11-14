@@ -1,0 +1,64 @@
+[root@ansible ansible]# cat docker_install.yml 
+---
+- name: docker install
+  hosts: all
+  ignore_errors: true
+  tasks:
+    - name: wget docker
+      get_url:
+        url: https://mirrors.aliyun.com/docker-ce/linux/centos/docker-ce.repo 
+        dest:  /etc/yum.repos.d/docker-ce.repo
+        force: yes
+
+
+    - name: yum install docker-ce
+      yum:
+        name: docker-ce-18.06.1.ce-3.el7
+        state: present
+    - name: servcie enabled
+      service:
+        name: docker
+        state: started
+        enabled: yes
+        force: yes
+    - name: ceshi docker
+      raw: docker --version
+执行剧本如下；
+[root@ansible ansible]# ansible-playbook docker_install.yml 
+
+PLAY [docker install] ***************************************************************************************************************
+
+TASK [Gathering Facts] **************************************************************************************************************
+ok: [192.168.8.200]
+ok: [192.168.8.202]
+
+TASK [wget docker] ******************************************************************************************************************
+ok: [192.168.8.202]
+fatal: [192.168.8.200]: FAILED! => {"changed": false, "msg": "Failed to validate the SSL certificate for mirrors.aliyun.com:443. Make sure your managed systems have a valid CA certificate installed. If the website serving the url uses SNI you need python >= 2.7.9 on your managed machine  (the python executable used (/usr/bin/python) is version: 2.6.6 (r266:84292, May 22 2015, 08:34:51) [GCC 4.4.7 20120313 (Red Hat 4.4.7-15)]) or you can install the `urllib3`, `pyOpenSSL`, `ndg-httpsclient`, and `pyasn1` python modules to perform SNI verification in python >= 2.6. You can use validate_certs=False if you do not need to confirm the servers identity but this is unsafe and not recommended. Paths checked for this platform: /etc/ssl/certs, /etc/pki/ca-trust/extracted/pem, /etc/pki/tls/certs, /usr/share/ca-certificates/cacert.org, /etc/ansible. The exception msg was: hostname 'mirrors.aliyun.com' doesn't match either of '*.alicdn.com', '*.cmos.greencompute.org', 'cmos.greencompute.org', 'm.intl.taobao.com', '*.mobgslb.tbcache.com', 'alikunlun.com', '*.alikunlun.com', 's.tbcdn.cn', '*.django.t.taobao.com', 'alicdn.com'.", "status": -1, "url": "https://mirrors.aliyun.com/docker-ce/linux/centos/docker-ce.repo"}
+...ignoring
+
+TASK [yum install docker-ce] ********************************************************************************************************
+ok: [192.168.8.202]
+fatal: [192.168.8.200]: FAILED! => {"changed": false, "msg": "No package matching 'docker-ce-18.06.1.ce-3.el7' found available, installed or updated", "rc": 126, "results": ["No package matching 'docker-ce-18.06.1.ce-3.el7' found available, installed or updated"]}
+...ignoring
+
+TASK [servcie enabled] **************************************************************************************************************
+fatal: [192.168.8.200]: FAILED! => {"changed": false, "msg": "Unsupported parameters for (service) module: force Supported parameters include: arguments, enabled, name, pattern, runlevel, sleep, state"}
+...ignoring
+ok: [192.168.8.202]
+
+TASK [ceshi docker] *****************************************************************************************************************
+fatal: [192.168.8.200]: FAILED! => {"changed": true, "msg": "non-zero return code", "rc": 127, "stderr": "Shared connection to 192.168.8.200 closed.\r\n", "stderr_lines": ["Shared connection to 192.168.8.200 closed."], "stdout": "bash: docker: command not found\r\n", "stdout_lines": ["bash: docker: command not found"]}
+...ignoring
+changed: [192.168.8.202]
+
+PLAY RECAP **************************************************************************************************************************
+192.168.8.200              : ok=5    changed=1    unreachable=0    failed=0    skipped=0    rescued=0    ignored=4   
+192.168.8.202              : ok=5    changed=1    unreachable=0    failed=0    skipped=0    rescued=0    ignored=0 
+上面200机器安装docker失败，原因是和202机器系统不是一个版本
+[root@ansible ~]# ansible all -a 'cat /etc/redhat-release' -i /opt/ansible/hosts
+192.168.8.200 | CHANGED | rc=0 >>
+Red Hat Enterprise Linux Server release 6.8 (Santiago)
+192.168.8.202 | CHANGED | rc=0 >>
+CentOS Linux release 7.9.2009 (Core)
+[root@ansible ~]# 
