@@ -1,0 +1,54 @@
+举例： 添加历史命令的时间，用户操作记录：
+[root@ansible ansible]# cat lineadd.yml 
+---
+- hosts: all
+  tasks:
+    - name: 添加变量/etc/profile
+      lineinfile:
+          dest: /etc/profile
+          line: 'export HISTTIMEFORMAT="%F %T $(whoami) "'
+    - name: 使其配置文件生效
+      raw: source /etc/profile
+
+[root@ansible ansible]# 
+cat /etc/profile
+..................................
+....................................
+....................................
+done
+
+unset i
+unset -f pathmunge
+export TMOUT=600
+export JAVA_HOME=/usr/local/java
+export PATH=/usr/local/sbin:/usr/bin:/bin:/usr/sbin:/sbin:/root/bin:{JAVA_HOME}/bin:/usr/local/java/bin
+
+###注意这边单引号，始终让whoami始终是字母自己，所以只能显示whoami字母，单引号转义
+export HISTTIMEFORMAT='%F %T `whoami` '
+###这边双引号才是添加的正确内容：
+export HISTTIMEFORMAT="%F %T $(whoami) "
+
+
+实现效果：
+[root@ansible ansible]# ansible-playbook lineadd.yml 
+
+PLAY [all] **************************************************************************************************************************
+
+TASK [Gathering Facts] **************************************************************************************************************
+ok: [192.168.8.200]
+ok: [192.168.8.202]
+
+TASK [添加变量/etc/profile] *************************************************************************************************************
+ok: [192.168.8.202]
+ok: [192.168.8.200]
+
+TASK [使其配置文件生效] *********************************************************************************************************************
+changed: [192.168.8.200]
+changed: [192.168.8.202]
+
+PLAY RECAP **************************************************************************************************************************
+192.168.8.200              : ok=3    changed=1    unreachable=0    failed=0    skipped=0    rescued=0    ignored=0   
+192.168.8.202              : ok=3    changed=1    unreachable=0    failed=0    skipped=0    rescued=0    ignored=0   
+
+[root@ansible ansible]# 
+
