@@ -1,4 +1,4 @@
-举例： 添加历史命令的时间，用户操作记录：
+、举例： 添加历史命令的时间，用户操作记录：
 [root@ansible ansible]# cat lineadd.yml 
 ---
 - hosts: all
@@ -51,4 +51,66 @@ PLAY RECAP *********************************************************************
 192.168.8.202              : ok=3    changed=1    unreachable=0    failed=0    skipped=0    rescued=0    ignored=0   
 
 [root@ansible ansible]# 
+
+
+
+替换文件内容（使用正则）：修改SELINUX的原则：
+剧本内容：
+[root@ansible ansible]# cat tihuan.yml 
+---
+- hosts: all
+  tasks:
+    - name: setenforce 0
+      lineinfile:
+        dest: /etc/selinux/config
+        regexp: SELINUX=permissive
+        line: SELINUX=disabled
+    - raw: setenforce 0
+执行剧本：
+[root@ansible ansible]# ansible-playbook tihuan.yml 
+
+PLAY [all] **************************************************************************************************************************
+
+TASK [Gathering Facts] **************************************************************************************************************
+ok: [192.168.8.200]
+ok: [192.168.8.202]
+
+TASK [setenforce 0] *****************************************************************************************************************
+ok: [192.168.8.202]
+ok: [192.168.8.200]
+
+TASK [raw] **************************************************************************************************************************
+changed: [192.168.8.202]
+changed: [192.168.8.200]
+
+PLAY RECAP **************************************************************************************************************************
+192.168.8.200              : ok=3    changed=1    unreachable=0    failed=0    skipped=0    rescued=0    ignored=0   
+192.168.8.202              : ok=3    changed=1    unreachable=0    failed=0    skipped=0    rescued=0    ignored=0   
+
+[root@ansible ansible]# 
+实现效果：
+[root@ansible ansible]# ansible all -m shell -a  "grep disabled /etc/selinux/config" -i /opt/ansible/hosts
+192.168.8.200 | CHANGED | rc=0 >>
+#     disabled - No SELinux policy is loaded.
+SELINUX=disabled
+192.168.8.202 | CHANGED | rc=0 >>
+#     disabled - No SELinux policy is loaded.
+SELINUX=disabled
+[root@ansible ansible]# 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
