@@ -1,0 +1,41 @@
+##剧本内容：
+[root@ansible ansible]# cat linknginx.yaml 
+---
+- hosts: all:!192.168.8.200
+  tasks:
+    - name: Create a symbolic link
+      file:
+         src: /usr/local/nginx/sbin/nginx
+         dest: /usr/sbin/nginx
+         state: link
+##执行：
+[root@ansible ansible]# ansible-playbook linknginx.yaml 
+
+PLAY [all:!192.168.8.200] ***********************************************************************************************************
+
+TASK [Gathering Facts] **************************************************************************************************************
+ok: [192.168.8.101]
+ok: [192.168.8.202]
+
+TASK [Create a symbolic link] *******************************************************************************************************
+changed: [192.168.8.101]
+changed: [192.168.8.202]
+
+PLAY RECAP **************************************************************************************************************************
+192.168.8.101              : ok=2    changed=1    unreachable=0    failed=0    skipped=0    rescued=0    ignored=0   
+192.168.8.202              : ok=2    changed=1    unreachable=0    failed=0    skipped=0    rescued=0    ignored=0   
+
+实现效果：
+[root@ansible ansible]# ansible  all -m shell -a "nginx -t"
+192.168.8.101 | CHANGED | rc=0 >>
+nginx: the configuration file /usr/local/nginx/conf/nginx.conf syntax is ok
+nginx: configuration file /usr/local/nginx/conf/nginx.conf test is successful
+192.168.8.202 | CHANGED | rc=0 >>
+nginx: the configuration file /usr/local/nginx/conf/nginx.conf syntax is ok
+nginx: configuration file /usr/local/nginx/conf/nginx.conf test is successful
+192.168.8.200 | UNREACHABLE! => {
+    "changed": false, 
+    "msg": "Failed to connect to the host via ssh: ssh: connect to host 192.168.8.200 port 22: No route to host", 
+    "unreachable": true
+}
+[root@ansible ansible]# 
