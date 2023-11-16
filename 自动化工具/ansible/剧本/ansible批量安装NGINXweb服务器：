@@ -1,0 +1,79 @@
+剧本内容：
+[root@ansible ansible]# cat nginx_install.yml 
+---
+- hosts:  all:!~192.168.8.200             #不包含200机器
+  tasks:
+    - name: download nginx
+      get_url:
+        url: http://nginx.org/download/nginx-1.18.0.tar.gz
+        dest: /tmp
+    - name: gcc
+      yum:
+        name: "{{ packages }}"     #安装编译环境所需求的包
+      vars:
+        packages:
+        - openssl-devel
+        - pcre-devel
+        - gcc
+    - name: tarnginx
+      unarchive:
+        src: /tmp/nginx-1.18.0.tar.gz  
+        dest: /root
+    - name: create nginx  #创建nginx用户
+      user: 
+        name: nginx 
+        state: present
+    - name: install nginx    #编译安装nginx
+      raw: cd /root/nginx-1.18.0;./configure --prefix=/usr/local/nginx --user=nginx --group=nginx --with-http_stub_status_module && make && make install
+    - name: "推送测试页面"
+      copy: 
+        content:
+                |
+            this is a test nginx test Webpage !!
+        dest: /usr/local/nginx/html/index.html
+    - name: "启动Nginx服务"
+      raw: netstat -ntl | grep -qw 80 || /usr/local/nginx/sbin/nginx
+
+[root@ansible ansible]# 
+执行剧本：
+[root@ansible ansible]# ansible-playbook nginx_install.yml
+
+PLAY [all:!~192.168.8.200] **********************************************************************************************************
+
+TASK [Gathering Facts] **************************************************************************************************************
+ok: [192.168.8.101]
+ok: [192.168.8.202]
+
+TASK [download nginx] ***************************************************************************************************************
+ok: [192.168.8.101]
+ok: [192.168.8.202]
+
+TASK [gcc] **************************************************************************************************************************
+ok: [192.168.8.202]
+ok: [192.168.8.101]
+
+TASK [tarnginx] *********************************************************************************************************************
+ok: [192.168.8.202]
+ok: [192.168.8.101]
+
+TASK [create nginx] *****************************************************************************************************************
+ok: [192.168.8.202]
+ok: [192.168.8.101]
+
+TASK [install nginx] ****************************************************************************************************************
+changed: [192.168.8.101]
+changed: [192.168.8.202]
+
+TASK [推送测试页面] ***********************************************************************************************************************
+changed: [192.168.8.101]
+changed: [192.168.8.202]
+
+TASK [启动Nginx服务] ********************************************************************************************************************
+changed: [192.168.8.101]
+changed: [192.168.8.202]
+
+PLAY RECAP **************************************************************************************************************************
+192.168.8.101              : ok=8    changed=3    unreachable=0    failed=0    skipped=0    rescued=0    ignored=0   
+192.168.8.202              : ok=8    changed=3    unreachable=0    failed=0    skipped=0    rescued=0    ignored=0   
+
+
