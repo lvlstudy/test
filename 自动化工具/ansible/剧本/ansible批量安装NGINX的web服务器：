@@ -75,5 +75,24 @@ changed: [192.168.8.202]
 PLAY RECAP **************************************************************************************************************************
 192.168.8.101              : ok=8    changed=3    unreachable=0    failed=0    skipped=0    rescued=0    ignored=0   
 192.168.8.202              : ok=8    changed=3    unreachable=0    failed=0    skipped=0    rescued=0    ignored=0   
+实现效果：
+[root@ansible ansible]# ansible all -m shell -a "curl localhost"
+[WARNING]: Consider using the get_url or uri module rather than running 'curl'.  If you need to use command because get_url or uri
+is insufficient you can add 'warn: false' to this command task or set 'command_warnings=False' in ansible.cfg to get rid of this
+message.
+192.168.8.101 | CHANGED | rc=0 >>
+this is a test nginx test Webpage !!  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+100    37  100    37    0     0   2740      0 --:--:-- --:--:-- --:--:--  2846
+192.168.8.202 | CHANGED | rc=0 >>
+this is a test nginx test Webpage !!  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+100    37  100    37    0     0   3040      0 --:--:-- --:--:-- --:--:--  3083
+192.168.8.200 | UNREACHABLE! => {
+    "changed": false, 
+    "msg": "Failed to connect to the host via ssh: ssh: connect to host 192.168.8.200 port 22: No route to host", 
+    "unreachable": true
+}
+
 
 
