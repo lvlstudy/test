@@ -1,0 +1,776 @@
+ansible基础模块学习
+简介
+
+ansible是基于Python开发的自动化运维工具，集合了众多运维工具（puppet、cfengine、chef、func、fabric）的优点
+
+ansible是基于模块工作的，本身没有批量部署的能力。真正具有批量部署的是ansible所运行的模块，ansible只是提供一种框架
+
+作用
+
+实现了批量系统配置、批量程序部署、批量运行命令等功能。
+
+框架
+
+connection plugins：负责和被监控端实现通信；
+
+host inventory：指定操作的主机，是一个配置文件里面定义监控的主机；
+
+各种模块核心模块、command模块、自定义模块；
+
+借助于插件完成记录日志邮件等功能；
+
+playbook：剧本执行多个任务时，非必需可以让节点一次性运行多个任务。
+
+
+
+架构
+
+图片
+字段解释
+
+Ansible：ansible核心程序
+
+Host Inventory：主机清单，可以定义主机组和主机
+
+模块：ansible执行任务是由模块执行的，不是ansible它自己执行的
+
+Playbook：剧本，Yaml定义的文件，类似于shell脚本
+
+Connect Plugin：连接插件
+
+
+
+原理
+
+我们的控制端一般拥有多个被控端，当我么需批量的去对主机进行操作的时候，这时候我们可以通过inventory定义主机组和主机，安装的时候，我们可以编写playbook或者AD-HOC，然后把模块等推给被控端，然后被控端再执行playbook或者AH-HOC，完成任务，这个推送过程是使用ssh的方式推送的，确保安全，并且客户端必须有Python2，确保能够执行playbook或者AD-HOC。这个就是他的整个架构原理
+
+
+
+命令执行过程
+
+加载自己的配置文件，默认/etc/ansible/ansible.cfg；
+
+查找对应的主机配置文件，找到要执行的主机或者组；
+
+加载自己对应的模块文件，如 command；
+
+通过ansible将模块或命令生成对应的临时py文件(python脚本)， 并将该文件传输至远程服务器；
+
+对应执行用户的家目录的.ansible/tmp/XXX/XXX.PY文件；
+
+给文件 +x 执行权限；
+
+执行并返回结果；
+
+删除临时py文件，sleep 0退出；
+
+
+
+理解图
+
+
+
+图片
+
+
+特性
+
+no agents：不需要在被管控主机上安装任何客户端；
+
+no server：无服务器端，使用时直接运行命令即可；
+
+modules in any languages：基于模块工作，可使用任意语言开发模块；
+
+yaml，not code：使用yaml语言定制剧本playbook；
+
+ssh by default：基于SSH工作；
+
+strong multi-tier solution：可实现多级指挥。
+
+
+
+配置
+
+ansible配置文件 ansible的配置文件是有优先级的：
+
+我们可以进入/etc/ansible/ansible.cfg（默认）的注释查看
+
+# config file for ansible -- https://ansible.com/
+
+# ===============================================
+
+# nearly all parameters can be overridden in ansible-playbook
+# or with command line flags. ansible will read ANSIBLE_CONFIG,
+# ansible.cfg in the current working directory, .ansible.cfg in
+# the home directory or /etc/ansible/ansible.cfg, whichever it
+# finds first
+
+
+
+可以看到ansible配置文件存在优先级的问题
+
+ansible.cfg 项目目录
+
+.ansible.cfg 当前用户的家目录
+
+/etc/ansible/ansible.cfg 默认就有的
+
+
+
+[root@manager ~]# cat /etc/ansible/ansible.cfg
+#inventory      = /etc/ansible/hosts      #主机列表配置文件
+#library        = /usr/share/my_modules/  #库文件存放目录
+#remote_tmp     = ~/.ansible/tmp          #临时py文件存放在远程主机目录
+#local_tmp      = ~/.ansible/tmp          #本机的临时执行目录
+#forks          = 5                       #默认并发数
+#sudo_user      = root                    #默认sudo用户
+#ask_sudo_pass = True                     #每次执行是否询问sudo的ssh密码
+#ask_pass      = True                     #每次执行是否询问ssh密码
+#remote_port    = 22                      #远程主机端口
+host_key_checking = False                 #跳过检查主机指纹
+log_path = /var/log/ansible.log           #ansible日志
+
+
+
+
+
+优点
+
+轻量级，无需在客户端安装agent，更新时，只需在操作机上进行一次更新即可；
+
+批量任务执行可以写成脚本，而且不用分发到远程就可以执行；
+
+使用python编写，维护更简单，ruby语法过于复杂；
+
+支持sudo。
+
+
+
+环境搭建
+
+说明
+
+主机   ip作用
+
+h1    192.168.50.60    master    
+
+h2    192.168.50.61    host1    
+
+h3    192.168.50.62    host2    
+
+h4    192.168.50.63    host3    
+
+
+
+ssh免秘钥登录配置
+
+#  ssh-keygen -t dsa -f ~/.ssh/id_dsa -P ""
+
+
+
+
+
+
+ssh-copy-id -i ~/.ssh/id_dsa.pub root@192.168.50.61
+
+
+
+可以写个脚本批量分发
+
+
+
+安装
+
+yum install -y ansible
+
+
+
+编辑hosts文件
+
+vim /etc/ansible/hosts
+
+[hosts]
+
+192.168.50.61
+
+192.168.50.62
+
+192.168.50.63
+
+[local]
+
+127.0.0.1
+
+
+
+
+
+测试
+
+ansible webservers -m command -a 'uptime'
+
+
+
+
+ansible all -m ping` 测试所有分类客户机ip
+
+
+
+常用模块
+
+用来查看远程主机的一些基本信息
+
+ansible webservers -m setup
+
+fetch 从主机中获取文件
+
+ansible 192.168.50.61 -m fetch -a 'src=/root/t2 dest=/root'
+
+file
+
+
+
+
+
+设置文件的属性
+
+相关选项:
+
+force：需要在两种情况下强制创建软链接，一种是源文件不存在，但之后会建立的情况下；另一种是目标软链接已存在，需要先取消之前的软链，然后创建新的软链，有两个选项：yes|no
+
+group：定义文件/目录的属组
+
+mode：定义文件/目录的权限
+
+owner：定义文件/目录的属主
+
+path：必选项，定义文件/目录的路径
+
+recurse：递归设置文件的属性，只对目录有效
+
+src：被链接的源文件路径，只应用于state=link的情况
+
+dest：被链接到的路径，只应用于state=link的情况
+
+state：
+
+directory：如果目录不存在，就创建目录
+
+file：即使文件不存在，也不会被创建
+
+link：创建软链接
+
+hard：创建硬链接
+
+touch：如果文件不存在，则会创建一个新的文件，如果文件或目录已存在，则更新其最后修改时
+
+absent：删除目录、文件或者取消链接文件
+
+用法：
+
+  创建目录：
+•        -a "path=  state=directory"
+•     创建链接文件：
+•        -a "path=  src='#'" /p>
+•     删除文件：
+•        -a "path=  state=absent“
+
+示例
+
+远程文件符号链接创建
+
+ansible hosts -m file -a "src=/etc/resolv.conf dest=/root/resolv.conf state=link"
+
+
+
+
+
+copy
+
+复制文件到远程主机
+
+相关选项
+
+backup：在覆盖之前，将源文件备份，备份文件包含时间信息。有两个选项：yes|no
+
+content：用于替代“src”，可以直接设定指定文件的值
+
+dest：必选项。要将源文件复制到的远程主机的绝对路径，如果源文件是一个目录，那么该路径也必须是个目录
+
+directory_mode：递归设定目录的权限，默认为系统默认权限
+
+force：如果目标主机包含该文件，但内容不同，如果设置为yes，则强制覆盖，如果为no，则只有当目标主机的目标位置不存在该文件时，才复制。默认为yes
+
+others：所有的file模块里的选项都可以在这里使用
+
+src：被复制到远程主机的本地文件，可以是绝对路径，也可以是相对路径。如果路径是一个目录，它将递归复制。在这种情况下，如果路径使用“/”来结尾，则只复制目录里的内容，如果没有使用“/”来结尾，则包含目录在内的整个内容全部复制，类似于rsync。
+
+
+
+用法：
+
+   复制文件
+•        -a "src='#'"  "
+•    给定内容生成文件
+•        -a "content=  dest=  "
+•    其它参数：mode, owner, group, ...
+
+
+示例：
+
+将本地文件“/etc/ansible/ansible.cfg”复制到远程服务器
+
+ansible hosts -m copy -a "src=/etc/ansible/ansible.cfg dest=/tmp/ansible.cfg owner=root group=root mode=0755"
+
+
+
+
+
+command
+
+
+
+在远程主机上执行命令
+
+远程文件信息查看
+
+
+
+相关选项:
+
+creates：一个文件名，当该文件存在，则该命令不执行
+
+free_form：要执行的linux指令
+
+chdir：在执行指令之前，先切换到该目录
+
+removes：一个文件名，当该文件不存在，则该选项不执行
+
+executable：切换shell来执行指令，该执行路径必须是一个绝对路径
+
+例子
+
+远程文件信息查看
+
+ansible webservers -m command -a "ls -al /tmp"
+ansible webservers -m command -a 'uname -r'
+ansible webservers -m command -a 'useradd abc' 添加用户
+
+
+
+ansible的command模块并不支持管道等输出
+
+
+
+shell
+
+切换到某个shell执行指定的指令，参数与command相同。
+
+与command不同的是，此模块可以支持命令管道，同时还有另一个模块也具备此功能：raw
+
+示例：
+
+先在本地创建一个SHELL脚本
+
+#!/bin/bash
+
+echo "This is a test step"
+
+
+
+
+
+将创建的脚本文件分发到远程
+
+# ansible hosts -m copy -a "src=/root/test.sh dest=/root/test.sh owner=root group=root mode=0755"
+
+
+
+远程执行
+
+#  ansible hosts -m shell -a "/root/test.sh"
+
+
+
+
+
+批量添加用户密码
+
+# ansible hosts -m shell -a 'useradd abc && echo 123 |passwd --stdin abc'
+
+
+
+
+
+cron模块
+
+管理计划任务条目
+
+用法： 
+
+   -a ""
+•        minute=
+•        hour=
+•        day=
+•        month=
+•        weekday=
+•        job=
+•        name=
+•        user=
+•        state={present|absent}
+
+
+
+
+
+示例：
+
+创建一个同步时间的计划任务，每5分钟同步一下服务器的时间
+
+#  ansible all -m cron -a "minute='*/5' job='/usr/sbin/ntpdate 192.168.50.60 &>/dev/null' name='sync time'"
+
+
+
+
+
+删除
+
+# ansible all -m cron -a "name='sync time' state=absent"
+
+
+
+
+
+hostname模块
+
+管理主机名
+
+用法:
+
+    name=
+
+示例
+
+获取主机名
+
+ansible all -a 'hostname'  
+
+
+
+
+
+修改主机名
+
+#  ansible 192.168.50.63 -m hostname -a  "name=t4"
+
+
+
+
+
+yum模块
+
+使用yum命令完成程序包管理
+
+用法：
+
+-a "”
+
+name=  state={present|latest}
+
+name=  state=absent
+
+示例
+
+yum安装tree
+
+ansible all -m yum -a "name=tree"
+
+
+
+卸载
+
+# ansible all -m yum -a 'name=tree state=absent'
+
+
+
+
+
+service模块
+
+服务管理
+
+用法：
+
+-a ""
+
+name=
+
+state=
+
+started
+
+stopped
+
+restarted
+
+enabled=
+
+runlevel=
+
+示例
+
+开启主机的ntpdate服务
+
+# ansible all -m service -a "name=ntpdate state=started enabled=true"
+
+
+
+
+
+group模块：增加或删除组
+
+
+
+用法：
+
+-a ""
+
+name=
+
+state=
+
+system=
+
+gid=
+
+
+
+示例：
+
+添加一个组
+
+# ansible all -m group -a "name=gansible system=true"
+
+
+
+user模块
+
+用户管理
+
+用法
+
+- name= : 创建的用户名
+- state= : present新增，absent删除
+- force= : 删除用户的时候删除家目录
+- system= : 创建系统用户
+- uid= : 指定UID
+- shell= : 指定shell
+-  home= : 指定用户家目录
+
+示例
+
+添加一个系统用户
+
+# ansible all -m user -a "name=ccc system=true"
+
+
+
+YAML：
+
+一种数据序列化工具的语言格式    
+
+
+
+数据结构：
+
+       key:value
+
+       - item1
+
+       - item2
+
+       - item3
+
+       例如{name:jerry, age:21}
+
+
+
+PlayBook
+
+核心元素：
+
+Tasks：任务，由模块定义的操作的列表；
+
+Variables：变量
+
+Templates：模板，即使用了模板语法的文本文件；
+
+Handlers：由特定条件触发的Tasks；
+
+Roles：角色；
+
+playbook的基础组件：
+
+Hosts：运行指定任务的目标主机；
+remote_user：在远程主机以哪个用户身份执行；
+sudo_user：非管理员需要拥有sudo权限；
+
+       tasks：任务列表
+           模块，模块参数：
+
+
+
+
+
+运行playbook，使用ansible-playbook命令
+
+检测语法
+
+# ansible-playbook  --syntax-check  /path/to/playbook.yaml
+
+
+
+测试运行
+
+# ansible-playbook -C /path/to/playbook.yaml
+
+           --list-hosts
+
+           -list-tasks
+
+           --list-tags
+
+
+
+运行
+
+# ansible-playbook  /path/to/playbook.yaml            -t TAGS, --tags=TAGS
+
+            --skip-tags=SKIP_TAGS
+           --start-at-task=START_AT
+
+
+
+例子:
+
+1.定义一个playbook任务来新增用户和组
+
+定义一个yaml的模板
+
+cat group.yml
+
+- hosts: all
+ remote_user: root
+ tasks:
+ - name: add a group
+   group: name=test system=test
+ - name: add a user
+   user: name=test group=test system=true
+
+
+
+
+
+检查语法：
+
+# ansible-playbook --syntax-check group.yml
+
+
+
+测试：
+
+# ansible-playbook -C group.yml  
+
+
+
+
+
+运行
+
+# ansible-playbook group.yml
+
+
+
+定义一个playbook任务来修改文件端口
+
+cat web.yml
+
+- hosts: hosts
+ remote_user: root
+ tasks:
+
+- hosts: hosts
+ remote_user: root
+ tasks:
+ - name: install http
+   yum: name=httpd state=latest
+ - name: install conf
+
+copy: src=/root/httpd.conf dest=/etc/httpd/conf/httpd.conf.bak (修改好的conf文件提准备好)
+ - name: start
+   service: name=httpd state=reloaded enabled=true
+
+
+ - name: install http
+   yum: name=httpd state=latest
+ - name: install conf
+
+copy: src=/root/httpd.conf dest=/etc/httpd/conf/httpd.conf.bak (修改好的conf文件提准备好)
+ - name: start
+   service: name=httpd state=reloaded enabled=true
+
+语法测试通过后 利用-C 先测试一下结果
+
+
+
+更多模块
+
+其他常用模块，比如：service、cron、yum、synchronize
+
+service：系统服务管理
+
+cron：计划任务管理
+
+yum：yum软件包安装管理
+
+synchronize：使用rsync同步文件
+
+user：系统用户管理
+
+group：系统用户组管理
+
+
+
+ansible模块
+
+   获取模块列表：ansible-doc -l
+   获取指定模块的使用帮助：ansible-doc -s MOD_NAME
+
+常用模块：
+
+ping模块：探测目标主机是否存活；
+
+
+图片
+认真做好每一件事
+
+微信号｜yfq940-
+
+图片
+@
+
+扫码关注获取原文链接~
+
+
+
+
+
+
+
+阅读 324
+
+步步运维步步坑
+​
+
+人划线
+
