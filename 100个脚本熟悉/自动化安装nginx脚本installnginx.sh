@@ -122,3 +122,44 @@ ln -s /usr/local/nginx/sbin/nginx /usr/sbin/nginx
 nginx -t
 [root@nginx conf]#   ls -l /usr/sbin/nginx
 lrwxrwxrwx. 1 root root 27 Dec 17 17:06 /usr/sbin/nginx -> /usr/local/nginx/sbin/nginx
+##########################反向代理的配置文件的内容
+http {
+    include       mime.types;
+    default_type  application/octet-stream;
+
+    #log_format  main  '$remote_addr - $remote_user [$time_local] "$request" '
+    #                  '$status $body_bytes_sent "$http_referer" '
+    #                  '"$http_user_agent" "$http_x_forwarded_for"';
+
+    #access_log  logs/access.log  main;
+
+    sendfile        on;
+    #tcp_nopush     on;
+
+    #keepalive_timeout  0;
+    keepalive_timeout  65;
+
+    #gzip  on;
+    upstream backend {
+     ip_hash;
+     server 192.168.3.201:80 weight=1;
+     server 192.168.3.202:80 weight=5;
+}
+
+    server {
+        listen       80;
+        server_name  www.11.com;
+
+        #charset koi8-r;
+
+        #access_log  logs/host.access.log  main;
+
+        location / {
+            root   html;
+            proxy_pass http://backend;
+            index  index.html index.htm;
+           # proxy_pass http://backend;
+        }
+
+[root@nginx conf]#
+###########################################
