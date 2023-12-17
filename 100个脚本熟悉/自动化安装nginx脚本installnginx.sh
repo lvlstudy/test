@@ -113,3 +113,12 @@ EOF
 
 download_ng
 install_ng
+
+
+
+
+#############增加nginx的快捷方式，方便使用nginx命令
+ln -s /usr/local/nginx/sbin/nginx /usr/sbin/nginx
+nginx -t
+[root@nginx conf]#   ls -l /usr/sbin/nginx
+lrwxrwxrwx. 1 root root 27 Dec 17 17:06 /usr/sbin/nginx -> /usr/local/nginx/sbin/nginx
