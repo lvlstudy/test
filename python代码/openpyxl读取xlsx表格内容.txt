@@ -1,0 +1,56 @@
+import openpyxl
+wb = openpyxl.load_workbook("C:/Users/admin/Desktop/1.xlsx")
+table = wb["Sheet1"]
+all = []
+for row in table:
+    print(row)
+    pack = []
+    for everyvalue in row:
+        pack.append(everyvalue.value)
+    all.append(pack)
+for item in all:
+    print(item)
+################执行结果：
+D:\softfiles\Python3.8解释器\python.exe C:/Users/admin/PycharmProjects/pythonProject/test.py
+(<Cell 'Sheet1'.A1>, <Cell 'Sheet1'.B1>)
+(<Cell 'Sheet1'.A2>, <Cell 'Sheet1'.B2>)
+(<Cell 'Sheet1'.A3>, <Cell 'Sheet1'.B3>)
+(<Cell 'Sheet1'.A4>, <Cell 'Sheet1'.B4>)
+(<Cell 'Sheet1'.A5>, <Cell 'Sheet1'.B5>)
+(<Cell 'Sheet1'.A6>, <Cell 'Sheet1'.B6>)
+(<Cell 'Sheet1'.A7>, <Cell 'Sheet1'.B7>)
+(<Cell 'Sheet1'.A8>, <Cell 'Sheet1'.B8>)
+(<Cell 'Sheet1'.A9>, <Cell 'Sheet1'.B9>)
+(<Cell 'Sheet1'.A10>, <Cell 'Sheet1'.B10>)
+(<Cell 'Sheet1'.A11>, <Cell 'Sheet1'.B11>)
+(<Cell 'Sheet1'.A12>, <Cell 'Sheet1'.B12>)
+[1, 2]
+[2, 4]
+[3, 5]
+[4, 6]
+[5, 7]
+[6, 8]
+[7, 9]
+[8, 10]
+[9, 11]
+[None, 12]
+[None, 13]
+[None, 14]
+
+Process finished with exit code 0
+
+
+#####1.xlsx
+1	2
+2	4
+3	5
+4	6
+5	7
+6	8
+7	9
+8	10
+9	11
+	12
+	13
+	14
+
