@@ -1,0 +1,75 @@
+代码：
+import xlwt
+
+# 创建一个workbook对象，相当于创建一个Excel文件
+workbook = xlwt.Workbook(encoding='utf-8')
+
+# 添加一个sheet，名为"sheet1"
+worksheet = workbook.add_sheet('员工情况')
+
+# 假设我们有一些数据要写入
+data = [
+    ['姓名', '年龄', '性别'],
+    ['张三', 28, '男'],
+    ['李四', 25, '女'],
+    ['王五', 30, '男']
+]
+
+# 批量写入数据
+for row, row_data in enumerate(data):
+    for col, value in enumerate(row_data):
+       ####写入哪一行，那一列，哪边的值########
+        worksheet.write(row, col, value)
+
+# 保存文件
+workbook.save('C:/Users/admin/Desktop/example.xls')
+
+
+
+
+
+
+######enumerate函数用法：
+
+# 定义一个列表
+fruits = ['apple', 'banana', 'cherry', 'date']
+
+# 使用 enumerate() 迭代列表并打印索引和值
+print("使用 enumerate()：")
+for index, fruit in enumerate(fruits):
+    print(f"索引 {index}: 值 {fruit}")
+
+# 在循环中使用 enumerate() 获取索引和值
+print("\n在循环中使用 enumerate()：")
+for index, fruit in enumerate(fruits):
+    print(f"索引 {index}: 值 {fruit}")
+
+# 使用 enumerate() 创建字典，将列表中的值作为键，索引作为值
+print("\n使用 enumerate() 创建字典：")
+fruit_dict = {fruit: index for index, fruit in enumerate(fruits)}
+print(fruit_dict)
+
+执行结果：
+使用 enumerate()：
+索引 0: 值 apple
+索引 1: 值 banana
+索引 2: 值 cherry
+索引 3: 值 date
+
+在循环中使用 enumerate()：
+索引 0: 值 apple
+索引 1: 值 banana
+索引 2: 值 cherry
+索引 3: 值 date
+
+使用 enumerate() 创建字典：
+{'apple': 0, 'banana': 1, 'cherry': 2, 'date': 3}
+
+Process finished with exit code 0
+
+
+
+
+
+
+
