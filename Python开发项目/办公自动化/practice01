@@ -1,0 +1,30 @@
+import pandas
+a = pandas.DataFrame({
+  "等级": ["A","B","C"],
+    "价格": [500,100,50]
+})
+
+b = pandas.DataFrame({
+    "人员": ["李四", "赵六", "王五"],
+    "公司情况": ["华为","小米","oppo"]
+})
+
+with pandas.ExcelWriter("C:/Users/admin/Desktop/data.xlsx") as f:
+    a.to_excel(f,sheet_name="产品情况",index=False)
+    b.to_excel(f,sheet_name="人员情况",index=False)
+print("两者数据已分别记录到各自的表中！！very good!!!")
+
+strdata = "等级ABC"
+key = strdata[0:2]
+value = strdata[2:5]
+print(key,value)
+newkey = '"'+key+'"'+':'
+value1 = '"'+value[0]+'"'
+value2 ='"'+ value[1]+'"'
+value3 = '"'+value[2]+'"'
+all = newkey+" ["+value1+","+value2+","+value3+"]"
+print(all)
+
+
+
+
